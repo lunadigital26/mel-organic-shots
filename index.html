@@ -908,5 +908,214 @@ renderCart();
 })();
 </script>
 
+
+<style>
+.chef{position:fixed;left:max(10px,env(safe-area-inset-left,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 4px);z-index:70;width:170px;pointer-events:none}
+.chef-fig{width:100%;display:block;pointer-events:auto;cursor:pointer;transform-origin:50% 100%;transition:transform .35s cubic-bezier(.65,.05,.25,1)}
+.chef-fig:hover{transform:translateY(-4px)}
+.chef svg{width:100%;display:block;overflow:visible}
+.chef #bob{animation:breathe 3.2s ease-in-out infinite;transform-box:view-box;transform-origin:110px 280px}
+@keyframes breathe{50%{transform:translateY(-3px) scaleY(1.01)}}
+.chef.walk #bob{animation:walkbob .38s ease-in-out infinite}
+@keyframes walkbob{50%{transform:translateY(-7px) rotate(1.5deg)}}
+.chef #eyes{transform-box:fill-box;transform-origin:center;animation:blink 4.6s infinite}
+@keyframes blink{0%,94%,100%{transform:scaleY(1)}96%{transform:scaleY(.08)}}
+.chef #head{transform-box:view-box;transform-origin:110px 150px;transition:transform .25s ease-out}
+.chef #armL{transform-box:view-box;transform-origin:68px 192px;transition:transform .5s cubic-bezier(.65,.05,.25,1)}
+.chef #armR{transform-box:view-box;transform-origin:152px 192px;transition:transform .5s cubic-bezier(.65,.05,.25,1)}
+.chef .hbottle{opacity:0;transition:opacity .25s}
+.chef .m-open,.chef .m-laugh{display:none}
+.chef.talk .m-smile{display:none}.chef.talk .m-open{display:block;animation:yap .22s steps(2) infinite}
+@keyframes yap{50%{transform:scaleY(.4)}}
+.chef .m-open{transform-box:fill-box;transform-origin:center}
+.chef.wave #armL{animation:wave 1.1s ease-in-out 2}
+@keyframes wave{0%,100%{transform:rotate(0)}25%,75%{transform:rotate(155deg)}50%{transform:rotate(128deg)}}
+.chef.hold #armR{transform:rotate(-150deg)}
+.chef.hold .hbottle{opacity:1}
+.chef.hold #head{transform:rotate(6deg)!important}
+.chef.cheer #armL{transform:rotate(160deg)}
+.chef.cheer #armR{transform:rotate(-160deg)}
+.chef.cheer .m-smile{display:none}.chef.cheer .m-laugh{display:block}
+.chef.cheer .chef-fig{animation:jump .7s cubic-bezier(.65,.05,.25,1) 2}
+@keyframes jump{40%{transform:translateY(-26px) rotate(-3deg)}70%{transform:translateY(2px) scaleY(.96)}}
+.chef .spark{opacity:0}
+.chef.cheer .spark{animation:spark .9s ease-out 2}
+@keyframes spark{0%{opacity:0;transform:scale(.3)}30%{opacity:1}100%{opacity:0;transform:scale(1.4) translateY(-10px)}}
+.chef .spark{transform-box:fill-box;transform-origin:center}
+.chef-bubble{position:absolute;left:12px;bottom:calc(100% - 18px);width:max-content;max-width:min(260px,calc(100vw - 40px));background:#fff;color:#14261C;border:2.5px solid #14261C;border-radius:20px;padding:12px 14px;font:600 .95rem/1.35 "Figtree",system-ui,sans-serif;box-shadow:0 14px 30px -16px rgba(20,38,28,.55);pointer-events:auto;transform-origin:20% 100%;transform:scale(.4) translateY(10px);opacity:0;transition:transform .35s cubic-bezier(.3,1.5,.5,1),opacity .2s}
+.chef-bubble.show{transform:none;opacity:1}
+.chef-bubble::after{content:"";position:absolute;left:34px;bottom:-11px;width:18px;height:18px;background:#fff;border-right:2.5px solid #14261C;border-bottom:2.5px solid #14261C;transform:rotate(45deg)}
+.chef-bubble b{font-family:"Caveat",cursive;font-size:1.25rem;color:#FF5A1F;display:block;line-height:1}
+.chef-bubble .cb-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.chef-bubble button{border:0;border-radius:999px;padding:.45em .95em;font:800 .82rem "Figtree",sans-serif;background:#FF5A1F;color:#fff;cursor:pointer;transition:transform .2s}
+.chef-bubble button:hover{transform:scale(1.06)}
+.chef-bubble button.ghost{background:#EEF6EF;color:#14261C}
+.chef-x{position:absolute;right:4px;top:30%;width:26px;height:26px;border-radius:50%;border:2px solid #14261C;background:#fff;font:800 .8rem sans-serif;color:#14261C;pointer-events:auto;cursor:pointer;opacity:0;transition:opacity .2s}
+.chef:hover .chef-x,.chef-x:focus-visible{opacity:1}
+.chef.min .chef-fig,.chef.min .chef-bubble,.chef.min .chef-x{display:none}
+.chef-open{display:none;pointer-events:auto;border:3px solid #fff;border-radius:999px;background:#123D27;color:#fff;font:800 .85rem "Figtree",sans-serif;padding:.6em 1em .6em .6em;align-items:center;gap:8px;box-shadow:0 10px 24px -10px rgba(0,0,0,.5);cursor:pointer}
+.chef.min .chef-open{display:inline-flex}
+.chef-open span{width:28px;height:28px;border-radius:50%;background:#8B5A3C;border:3px solid #fff}
+@media (max-width:600px){.chef{width:118px}.chef-bubble{font-size:.88rem}}
+@media (prefers-reduced-motion:reduce){.chef *{animation:none!important}}
+</style>
+
+<div class="chef" id="chef" aria-live="polite">
+  <div class="chef-bubble" id="chefBubble" role="status"></div>
+  <button class="chef-x" id="chefX" aria-label="Hide Chef Mel">✕</button>
+  <button class="chef-open" id="chefOpen"><span></span>Chat with Mel</button>
+  <div class="chef-fig" id="chefFig" role="button" tabindex="0" aria-label="Chef Mel, tap for a tip">
+  <svg viewBox="0 0 220 300" aria-hidden="true">
+   <g class="spark" fill="#FFD23F"><path d="M30 60l4 10 10 4-10 4-4 10-4-10-10-4 10-4z"/></g>
+   <g class="spark" fill="#FF5A1F"><path d="M188 40l3 8 8 3-8 3-3 8-3-8-8-3 8-3z"/></g>
+   <g class="spark" fill="#1E7A45"><circle cx="196" cy="110" r="5"/></g>
+   <g id="bob">
+    <!-- back curls -->
+    <g fill="#2A1810"><circle cx="72" cy="104" r="17"/><circle cx="148" cy="104" r="17"/><circle cx="66" cy="126" r="14"/><circle cx="154" cy="126" r="14"/><circle cx="74" cy="144" r="11"/><circle cx="146" cy="144" r="11"/></g>
+    <!-- torso -->
+    <path d="M52 300 L58 198 Q64 166 110 160 Q156 166 162 198 L168 300 Z" fill="#FFFFFF" stroke="#DDE3DE" stroke-width="2"/>
+    <g fill="#E3E8E4"><circle cx="70" cy="210" r="3"/><circle cx="70" cy="228" r="3"/><circle cx="150" cy="210" r="3"/><circle cx="150" cy="228" r="3"/></g>
+    <rect x="100" y="140" width="20" height="24" rx="6" fill="#7A4E33"/>
+    <!-- apron -->
+    <path d="M80 206 Q110 200 140 206 L148 300 L72 300 Z" fill="#1E7A45"/>
+    <path d="M90 168 L82 207 M130 168 L138 207" stroke="#1E7A45" stroke-width="6" stroke-linecap="round"/>
+    <path d="M86 262 Q110 268 134 262" stroke="#155E34" stroke-width="3" fill="none"/>
+    <g transform="translate(97 218) scale(.55)"><circle cx="24" cy="24" r="23" fill="#FF5A1F"/><path d="M24 10c0 0-9 11-9 17.5a9 9 0 0 0 18 0C33 21 24 10 24 10z" fill="#FFFDF7"/><path d="M25 11c3-5 9-6 12-5-1 5-6 8-12 5z" fill="#8FD19E"/></g>
+    <!-- neckerchief -->
+    <path d="M92 160 Q110 178 128 160 L124 174 Q110 186 96 174 Z" fill="#FF5A1F"/>
+    <circle cx="110" cy="178" r="5" fill="#E04A12"/>
+    <!-- left arm (waves) -->
+    <g id="armL">
+     <path d="M66 188 Q48 218 52 252 Q62 258 72 252 Q72 224 84 200 Z" fill="#FFFFFF" stroke="#DDE3DE" stroke-width="2"/>
+     <path d="M52 246 Q62 252 73 247 L72 254 Q62 259 53 254Z" fill="#FF5A1F"/>
+     <circle cx="62" cy="262" r="10" fill="#8B5A3C"/>
+    </g>
+    <!-- right arm (holds bottle) -->
+    <g id="armR">
+     <path d="M154 188 Q172 218 168 252 Q158 258 148 252 Q148 224 136 200 Z" fill="#FFFFFF" stroke="#DDE3DE" stroke-width="2"/>
+     <path d="M168 246 Q158 252 147 247 L148 254 Q158 259 167 254Z" fill="#FF5A1F"/>
+     <g class="hbottle" transform="rotate(-30 158 262)">
+      <rect x="150" y="262" width="16" height="28" rx="5" fill="var(--hb,#E9A520)" stroke="#14261C" stroke-width="1.5"/>
+      <rect x="150" y="268" width="16" height="11" fill="#FFFDF7"/>
+      <rect x="154" y="289" width="8" height="8" rx="2" fill="#23402F"/>
+     </g>
+     <circle cx="158" cy="262" r="10" fill="#8B5A3C"/>
+    </g>
+    <!-- head -->
+    <g id="head">
+     <circle cx="76" cy="116" r="7" fill="#8B5A3C"/><circle cx="144" cy="116" r="7" fill="#8B5A3C"/>
+     <circle cx="75" cy="128" r="4.5" fill="none" stroke="#F2B233" stroke-width="2"/><circle cx="145" cy="128" r="4.5" fill="none" stroke="#F2B233" stroke-width="2"/>
+     <ellipse cx="110" cy="113" rx="35" ry="39" fill="#8B5A3C"/>
+     <path d="M75 96 Q80 74 110 72 Q140 74 145 96 Q138 86 124 88 Q118 80 110 84 Q100 80 94 88 Q82 86 75 96Z" fill="#2A1810"/>
+     <circle cx="80" cy="94" r="6" fill="#2A1810"/><circle cx="140" cy="94" r="6" fill="#2A1810"/>
+     <!-- toque -->
+     <g stroke="#E2E6E3" stroke-width="2" fill="#FFFFFF">
+      <circle cx="86" cy="50" r="20"/><circle cx="134" cy="50" r="20"/><circle cx="110" cy="38" r="25"/>
+      <rect x="74" y="58" width="72" height="22" rx="7"/>
+     </g>
+     <rect x="74" y="72" width="72" height="5" fill="#1E7A45"/>
+     <path d="M90 99 Q97 94 104 98 M116 98 Q123 94 130 99" stroke="#2A1810" stroke-width="3" stroke-linecap="round" fill="none"/>
+     <g id="eyes">
+      <ellipse cx="97" cy="109" rx="6.2" ry="6.8" fill="#FFFFFF"/><ellipse cx="123" cy="109" rx="6.2" ry="6.8" fill="#FFFFFF"/>
+      <g id="pupils"><circle cx="97" cy="110" r="3.8" fill="#1A0F0A"/><circle cx="123" cy="110" r="3.8" fill="#1A0F0A"/><circle cx="98.4" cy="108.4" r="1.2" fill="#fff"/><circle cx="124.4" cy="108.4" r="1.2" fill="#fff"/></g>
+     </g>
+     <path d="M93 104 Q97 101 101 103 M119 103 Q123 101 127 104" stroke="#1A0F0A" stroke-width="1.6" fill="none"/>
+     <path d="M107 116 Q110 123 114 119" stroke="#6E432A" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+     <circle cx="87" cy="123" r="6" fill="#D9705A" opacity=".45"/><circle cx="133" cy="123" r="6" fill="#D9705A" opacity=".45"/>
+     <path class="m-smile" d="M97 129 Q110 141 123 129" stroke="#5A2618" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+     <ellipse class="m-open" cx="110" cy="133" rx="7.5" ry="6.5" fill="#5A2618"/>
+     <g class="m-laugh"><path d="M95 127 Q110 150 125 127 Z" fill="#5A2618"/><path d="M98 128 Q110 133 122 128 L121 131 Q110 135 99 131Z" fill="#fff"/></g>
+    </g>
+   </g>
+  </svg>
+  </div>
+</div>
+
+<script>
+(function(){
+ const chef=document.getElementById("chef");if(!chef||typeof byId==="undefined")return;
+ const bubble=document.getElementById("chefBubble"),fig=document.getElementById("chefFig"),head=document.getElementById("head"),pupils=document.getElementById("pupils");
+ const reduceM=matchMedia("(prefers-reduced-motion: reduce)").matches;
+ const LINES={
+  ginger:"Ginger Fire! My 6am wake-up call. Fair warning: it bites back.",
+  turmeric:"Golden Sunrise is my after-work saver. The black pepper helps the turmeric do its thing.",
+  beet:"Beet Street! My gym friends swear by it before a workout.",
+  green:"Green Reset tastes like my garden in July. Wheatgrass, cucumber and mint.",
+  elder:"Elder Shield is what I hand my family the minute somebody sniffles.",
+  citrus:"Pink Citrus is pure sunshine. Grapefruit, orange, lemon and lime.",
+  pineapple:"Pineapple Glow: sweet first, then the ginger shows up.",
+  firecider:"Fire Cider is my grandma's winter tonic. It's strong, so chase it with water!",
+  acv:"Apple Cider Kick wakes up your gut. A little tart, a little cinnamon.",
+  seamoss:"Sea Moss Calm is my mellow one. Coconut water and lime, so smooth.",
+  blue:"Blue Lagoon! Yes, that color is real. It's blue spirulina.",
+  carrot:"Carrot Zing is beta-carotene with a ginger kick.",
+  garlic:"Garlic Guard. Maybe skip this one before a first date!",
+  aloe:"Aloe Soothe is cool and calm. Lovely for a busy stomach.",
+  cranberry:"Cape Cranberry, made with Massachusetts cranberries. A little taste of home."
+ };
+ const CHEERS=["Ooh, great pick!","That's going straight in your fridge!","You're going to feel that one!","Yes! Want to make it a bundle and save?"];
+ const TIPS=["Shake it before you shoot it!","Keep them cold and drink within 4 days.","New to ginger? Start with half a shot.","Bring your empty bottles back for $0.25 off.","Tap any bottle and I'll tell you about it."];
+ const SECTIONS={shop:"All 15 of my shots are right here. Tap a bottle to meet it!",benefits:"This is the why. Every root is in there for a reason.",bundles:"Bundles save you a few dollars. The Weekly Ritual is my favorite.",mel:"That's my story. Thanks for reading it!",local:"Order by Sunday and I'll press yours fresh on Monday."};
+ let hideT,typeT,actT;
+ function act(cls,ms){clearTimeout(actT);chef.classList.remove("wave","hold","cheer");void chef.offsetWidth;chef.classList.add(cls);actT=setTimeout(()=>chef.classList.remove(cls),ms)}
+ function say(text,id){
+  if(chef.classList.contains("min"))return;
+  clearTimeout(hideT);clearInterval(typeT);
+  const title=id?`<b>${byId[id].name}</b>`:"";
+  bubble.innerHTML=`${title}<span class="cb-t"></span>${id?`<div class="cb-actions"><button data-chef-add="${id}">Add one · $4.50</button><button class="ghost" data-chef-close>Maybe later</button></div>`:""}`;
+  bubble.classList.add("show");chef.classList.add("talk");
+  const t=bubble.querySelector(".cb-t");let i=0;
+  if(reduceM){t.textContent=text;chef.classList.remove("talk")}
+  else typeT=setInterval(()=>{t.textContent=text.slice(0,++i);if(i>=text.length){clearInterval(typeT);chef.classList.remove("talk")}},22);
+  hideT=setTimeout(()=>bubble.classList.remove("show"),id?9000:5500);
+ }
+ bubble.addEventListener("click",e=>{
+  const a=e.target.closest("[data-chef-add]");
+  if(a){add("shot:"+a.dataset.chefAdd,1,fig);toast("Added "+byId[a.dataset.chefAdd].name);return}
+  if(e.target.closest("[data-chef-close]")){bubble.classList.remove("show");act("wave",2200)}
+ });
+ // click a bottle anywhere -> chef holds it up and talks about it
+ let px=0,py=0;
+ document.addEventListener("pointerdown",e=>{px=e.clientX;py=e.clientY},true);
+ document.addEventListener("click",e=>{
+  const b=e.target.closest(".b3d");if(!b||!b.dataset.b)return;
+  if(Math.hypot(e.clientX-px,e.clientY-py)>8)return;
+  const id=b.dataset.b;chef.style.setProperty("--hb",byId[id].c);
+  act("hold",4200);say(LINES[id]||byId[id].tagline,id);
+ });
+ // cheer when something is added
+ const baseAdd=add;
+ add=function(k,n,el){baseAdd(k,n,el);if(n>0&&!document.getElementById("drawer").classList.contains("open")){setTimeout(()=>{act("cheer",1500);say(CHEERS[Math.floor(Math.random()*CHEERS.length)])},el?650:0)}};
+ // tap the chef
+ const tip=()=>{act("wave",2300);say(TIPS[Math.floor(Math.random()*TIPS.length)])};
+ fig.addEventListener("click",tip);fig.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();tip()}});
+ document.getElementById("chefX").onclick=()=>{chef.classList.add("min");bubble.classList.remove("show")};
+ document.getElementById("chefOpen").onclick=()=>{chef.classList.remove("min");act("wave",2300);say("I'm back! Tap any bottle and I'll tell you about it.")};
+ // eyes + head follow the cursor
+ addEventListener("pointermove",e=>{
+  const r=fig.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height*.35;
+  const dx=Math.max(-1,Math.min(1,(e.clientX-cx)/500)),dy=Math.max(-1,Math.min(1,(e.clientY-cy)/400));
+  pupils.setAttribute("transform",`translate(${dx*2.6} ${dy*2.2})`);
+  if(!chef.classList.contains("hold"))head.style.transform=`rotate(${dx*7}deg) translate(${dx*2}px,${dy*1.5}px)`;
+ },{passive:true});
+ // she moves with you: lean + walk bounce while scrolling
+ let lastY=scrollY,lean=0,walkT;
+ addEventListener("scroll",()=>{
+  const d=scrollY-lastY;lastY=scrollY;
+  if(reduceM)return;
+  lean=Math.max(-9,Math.min(9,lean+d*0.06));
+  chef.classList.add("walk");clearTimeout(walkT);walkT=setTimeout(()=>chef.classList.remove("walk"),220);
+ },{passive:true});
+ (function loop(){lean*=0.9;if(!chef.classList.contains("cheer"))fig.style.transform=Math.abs(lean)>.05?`rotate(${-lean}deg)`:"";requestAnimationFrame(loop)})();
+ // section greetings
+ if("IntersectionObserver" in window){
+  const seen=new Set();
+  const io=new IntersectionObserver(es=>es.forEach(en=>{const id=en.target.id;if(en.isIntersecting&&!seen.has(id)&&!bubble.classList.contains("show")){seen.add(id);act("wave",2300);say(SECTIONS[id])}}),{threshold:.35});
+  Object.keys(SECTIONS).forEach(id=>{const el=document.getElementById(id);if(el)io.observe(el)});
+ }
+ setTimeout(()=>{act("wave",2300);say("Hi, I'm Chef Mel! Tap any bottle and I'll tell you all about it.")},1200);
+})();
+</script>
+
 </body>
 </html>
