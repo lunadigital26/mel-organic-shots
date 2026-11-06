@@ -8,6 +8,7 @@
 <title>Mel Organic Shots</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://images.unsplash.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700;800&family=Caveat:wght@600;700&display=swap">
 <style>
 /* Layout: bright juice-bar storefront — flavor-colored blocks that flow into each other with liquid waves; one big 3D bottle leads */
@@ -320,6 +321,23 @@ footer{background:var(--deep);color:#fff;padding-block:56px}
 .qv-scene svg{width:100%;height:100%;display:block}
 .qv-art.photo .qv-scene{display:none}
 .qv-art .qv-stage{z-index:1}
+
+
+/* real-photo + performance pass */
+.giant,#slices{display:none!important}
+.waves svg,.ribbon .track,.hero h1 .wob,.photo-scene img{animation:none!important}
+.ribbon .track{justify-content:center;width:100%;flex-wrap:wrap;row-gap:6px}
+.ribbon .track span:nth-child(n+7){display:none}
+.photo-scene img{transform:none!important}
+.scene .ph-fallback{position:absolute;inset:0;background:linear-gradient(135deg,var(--tint),#fff)}
+.ben-stage.ph{background:var(--tint,#eee) center/cover no-repeat;border-radius:28px;min-height:440px;overflow:hidden;box-shadow:0 30px 60px -36px rgba(20,38,28,.7);isolation:isolate}
+.ben-stage.ph::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.35),transparent 55%);z-index:-1}
+.ben-stage.ph .b3d{position:relative;z-index:1}
+.ben-credit,.hero-credit{position:absolute;right:12px;bottom:10px;font-size:.68rem;font-weight:700;color:rgba(255,255,255,.8);text-decoration:none;z-index:2}
+.hero-credit{bottom:96px;right:max(16px,env(safe-area-inset-right,0px))}
+.qv-art{background:radial-gradient(circle at 50% 45%,#fff 0,var(--tint) 70%)}
+.qv-art::before{display:none}
+@media (max-width:760px){.ben-stage.ph{min-height:340px}}
 
 /* 3D */
 .b3d{position:relative;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
@@ -665,6 +683,15 @@ function fly(fromEl,color){
 let toastT;function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),1800)}
 
 /* hero flavor switcher */
+const U=(id,w)=>`https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=70`;
+const SCENE_PHOTO={m:"1490682143684-14369e18dce8",o:"1535262412227-85541e910204"};
+const BEN_PHOTO={"Ginger":"1758055660285-d32b7b3b1e77","Turmeric":"1768729341078-9da4e0ea959e","Beet":"1757513671720-e95bb606ac82","Elderberry":"1723239714209-1f124b16572b","Citrus":"1577234286642-fc512a5f8f11","Vinegar & garlic":"1540148426945-6cf22a6b2383","Sea moss":"1541417904950-b855846fe074","Wheatgrass":"1607718037487-5625a5ff5abf"};
+function heroPhoto(st){
+ if(st==="f")return `<div class="sc photo-scene"><img src="img/rainforest.webp" alt="" decoding="async"></div>`;
+ const id=SCENE_PHOTO[st];
+ return `<div class="sc photo-scene"><div class="ph-fallback"></div><img src="${U(id,1600)}" srcset="${U(id,800)} 800w, ${U(id,1600)} 1600w, ${U(id,2200)} 2200w" sizes="100vw" alt="" decoding="async" onerror="this.remove()"></div>`;
+}
+
 const SCENE_OF={ginger:"m",turmeric:"m",carrot:"m",firecider:"m",blue:"o",pineapple:"o",seamoss:"o",citrus:"o",aloe:"o",green:"f",elder:"f",beet:"f",cranberry:"f",garlic:"f",acv:"f"};
 function sceneSvg(id,small){
  const s=byId[id],t=SCENE_OF[id]||"f",u="g"+Math.random().toString(36).slice(2,7);
@@ -709,9 +736,8 @@ $("#flavDots").innerHTML=FEATURED.map((id,i)=>`<button style="--dc:${byId[id].c}
 function setHero(i,kick){
  heroIdx=(i+FEATURED.length)%FEATURED.length;const s=byId[FEATURED[heroIdx]];const hero=$("#hero");
  hero.style.setProperty("--tint",s.tint);hero.style.setProperty("--c",s.c);
- const sc=$("#scene"),st=SCENE_OF[s.id]||"f";hero.classList.toggle("dark-scene",st==="f");
- if(st==="f"){if(sc.dataset.t!=="photo"){sc.dataset.t="photo";sc.innerHTML='<div class="sc photo-scene"><img src="img/rainforest.webp" alt="" decoding="async"></div>'}}
- else if(sc.dataset.t!==st+s.id){sc.dataset.t=st+s.id;sc.innerHTML=sceneSvg(s.id)}
+ const sc=$("#scene"),st=SCENE_OF[s.id]||"f";hero.classList.add("dark-scene");
+ if(sc.dataset.t!==st){sc.dataset.t=st;sc.innerHTML=heroPhoto(st)}
  $("#giant").innerHTML=Array(6).fill(`<span>${s.name}</span>`).join("");
  ["nowName","nowTag","nowPrice"].forEach(id=>{const e=$("#"+id);e.classList.remove("swap");void e.offsetWidth;e.classList.add("swap")});
  $("#nowName").textContent=s.name;$("#nowTag").textContent=s.tagline;$("#nowPrice").textContent=money(PRICE);
@@ -719,8 +745,7 @@ function setHero(i,kick){
  const wrap=$("#heroBottleWrap");
  if(!wrap.firstChild){wrap.innerHTML=b3(s.id);wrap.firstChild.dataset.hero="1"}
  else{wrap.firstChild.dataset.b=s.id;wrap.firstChild.innerHTML=bottle(s.c,s.name);if(kick&&window.kickBottle)window.kickBottle(wrap.firstChild)}
- const pos=[[8,12,80,7],[78,8,56,5.5],[84,62,70,8],[4,66,52,6.5]];
- $("#slices").innerHTML=pos.map(([x,y,sz,d],k)=>`<div class="slice" style="left:${x}%;top:${y}%;--s:${sz}px;--d:${d}s;--dl:-${k*1.3}s">${sliceSvg(k%2?s.c:"#FF5A1F")}</div>`).join("");
+ $("#slices").innerHTML="";
 }
 function autoHero(){clearInterval(heroTimer);if(!reduce)heroTimer=setInterval(()=>{if(!$("#hero").matches(":hover"))setHero(heroIdx+1,true)},4200)}
 $("#flavDots").addEventListener("click",e=>{const b=e.target.closest("[data-h]");if(!b)return;setHero(+b.dataset.h,true);autoHero()});
@@ -728,7 +753,7 @@ $("#nowAdd").addEventListener("click",e=>{const id=FEATURED[heroIdx];add("shot:"
 $("#ctaAdd").addEventListener("click",()=>{add("bundle:starter",1,$("#ctaRow"));toast("Added Starter Six")});
 setHero(0);autoHero();
 // parallax: scene layers drift with the cursor
-addEventListener("pointermove",e=>{if(reduce||e.pointerType!=="mouse")return;const x=e.clientX/innerWidth-.5,y=e.clientY/innerHeight-.5;document.querySelectorAll("#scene [data-d]").forEach(g=>{const d=+g.dataset.d;g.style.transform=`translate(${-x*d}px,${-y*d*.5}px)`})},{passive:true});
+addEventListener("pointermove",e=>{if(true)return;const x=e.clientX/innerWidth-.5,y=e.clientY/innerHeight-.5;document.querySelectorAll("#scene [data-d]").forEach(g=>{const d=+g.dataset.d;g.style.transform=`translate(${-x*d}px,${-y*d*.5}px)`})},{passive:true});
 
 /* products */
 let goal="all";const qtyPick={};
@@ -812,8 +837,8 @@ const ING={
 const BEN_ING={"Ginger":["ginger","lemon","honey","cayenne"],"Turmeric":["turmeric","pepper","orange","ginger"],"Beet":["beet","apple","lemon","ginger"],"Elderberry":["elderberry","cinnamon","honey","lemon"],"Citrus":["orange","grapefruit","lemon","lime"],"Vinegar & garlic":["garlic","apple","honey","cayenne"],"Sea moss":["seamoss","coconut","spirulina","lime"],"Wheatgrass":["wheatgrass","cucumber","mint","lemon"]};
 const ING_POS=[["2%","4%",84,""],["2%","0%",78," r"],["2%","60%",76,""],["2%","56%",86," r"]];
 function ingStage(b){
- const list=BEN_ING[b.k]||[];
- return `<div class="ben-stage">${b3(b.in[0])}${list.map((id,i)=>{const g=ING[id];const p=ING_POS[i];return `<button class="ingr-pop${p[3]}" data-ing="${id}" style="--x:${p[0]};--y:${p[1]};--sz:${p[2]}px;--dl:${120+i*140}ms" aria-label="${g.n}"><svg viewBox="0 0 80 80" aria-hidden="true">${g.s}</svg><span class="nm">${g.n}</span></button>`}).join("")}</div>`;
+ const ph=BEN_PHOTO[b.k];
+ return `<div class="ben-stage ph" style="background-image:url('${U(ph,900)}');--tint:${byId[b.in[0]].tint}">${b3(b.in[0])}</div>`;
 }
 
 let benIdx=0;
@@ -921,7 +946,7 @@ renderCart();
  try{renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});}catch(e){return}
  if(!renderer.getContext())return;
  document.documentElement.classList.add("gl");
- renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+ renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
  renderer.outputEncoding=THREE.sRGBEncoding;
  renderer.toneMapping=THREE.LinearToneMapping;renderer.toneMappingExposure=1.18;
  renderer.autoClear=false;renderer.setClearColor(0x000000,0);
@@ -1323,7 +1348,7 @@ body.qv-open #gl{z-index:93}
  const KEYS=[["black pepper","pepper"],["sea moss","seamoss"],["spirulina","spirulina"],["coconut","coconut"],["wheatgrass","wheatgrass"],["cucumber","cucumber"],["mint","mint"],["ginger","ginger"],["turmeric","turmeric"],["grapefruit","grapefruit"],["lemon","lemon"],["lime","lime"],["orange","orange"],["honey","honey"],["cayenne","cayenne"],["beet","beet"],["apple","apple"],["elderberry","elderberry"],["cinnamon","cinnamon"],["garlic","garlic"]];
  const POS=[["2%","6%",80,""],["2%","4%",74," r"],["4%","62%",72,""],["2%","60%",82," r"]];
  function ingFor(s){const t=s.ingr.toLowerCase(),out=[];KEYS.forEach(([k,id])=>{if(t.includes(k)&&!out.includes(id)&&out.length<4)out.push(id)});return out}
- let cur=null,qty=1,mode="3d";
+ let cur=null,qty=1,mode="photo";
  function render(id,swap){
   const s=byId[id];cur=id;qty=1;
   const ben=BENEFITS.find(b=>b.in[0]===id)||BENEFITS.find(b=>b.in.includes(id));
@@ -1332,7 +1357,7 @@ body.qv-open #gl{z-index:93}
   card.innerHTML=`<button class="qv-x" data-qv-close aria-label="Close">✕</button>
    <button class="qv-nav prev" data-qv-step="-1" aria-label="Previous shot">‹</button>
    <button class="qv-nav next" data-qv-step="1" aria-label="Next shot">›</button>
-   <div class="qv-art${mode==="photo"?" photo":""}"><div class="qv-scene">${sceneSvg(id,true)}</div><img class="qv-photo" src="img/${id}.webp" alt="${s.name} bottle photo" decoding="async"><div class="qv-view" role="group" aria-label="View"><button data-view="3d" aria-pressed="${mode==="3d"}">3D bottle</button><button data-view="photo" aria-pressed="${mode==="photo"}">Real photo</button></div><div class="qv-stage">${b3(id)}${ingFor(s).map((g,i)=>`<button class="ingr-pop${POS[i][3]}" data-qing="${g}" style="--x:${POS[i][0]};--y:${POS[i][1]};--sz:${POS[i][2]}px;--dl:${150+i*140}ms" aria-label="${ING[g].n}"><svg viewBox="0 0 80 80" aria-hidden="true">${ING[g].s}</svg><span class="nm">${ING[g].n}</span></button>`).join("")}</div><p class="qv-hint">Drag the bottle · tap an ingredient</p></div>
+   <div class="qv-art${mode==="photo"?" photo":""}"><img class="qv-photo" src="img/${id}.webp" alt="${s.name} bottle photo" decoding="async"><div class="qv-view" role="group" aria-label="View"><button data-view="3d" aria-pressed="${mode==="3d"}">3D bottle</button><button data-view="photo" aria-pressed="${mode==="photo"}">Real photo</button></div><div class="qv-stage">${b3(id)}</div><p class="qv-hint">Drag the bottle to spin it</p></div>
    <div class="qv-info">
     ${s.tag?`<span class="qv-tag">${s.tag}</span>`:""}
     <h3 id="qvName">${s.name}</h3>
