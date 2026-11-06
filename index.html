@@ -1,0 +1,912 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Organic cold-pressed juice shots, hand-pressed by Mel in Methuen, MA. Local pickup and delivery.">
+<link rel="icon" href="logo.svg">
+<title>Mel Organic Shots</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700;800&family=Caveat:wght@600;700&display=swap">
+<style>
+/* Layout: bright juice-bar storefront — flavor-colored blocks that flow into each other with liquid waves; one big 3D bottle leads */
+:root{
+  --bg:#FFFFFF; --ink:#14261C; --muted:#4D5F53; --line:#EDEBE5;
+  --accent:#FF5A1F; --leaf:#1E7A45; --pop:#FFD23F; --coral:#1E7A45; --mint:#DDF3E4; --deep:#123D27; --blush:#FFE3EC;
+  --c:#E9A520; --tint:#FFF0C9;
+  --display:"Bricolage Grotesque", "Arial Black", system-ui, sans-serif;
+  --body:"Figtree", "Segoe UI", system-ui, sans-serif;
+  --script:"Caveat", "Comic Sans MS", cursive;
+  --ease:cubic-bezier(.65,.05,.25,1);
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:#123D27}
+.wrap{max-width:1200px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display);line-height:.98;letter-spacing:-.025em;text-wrap:balance;margin:0}
+h2{font-size:clamp(2.3rem,6vw,4.4rem);font-weight:800}
+h3{font-size:1.4rem;font-weight:800}
+p{margin:0}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:10px}
+.eyebrow{font-weight:800;font-size:.8rem;letter-spacing:.16em;text-transform:uppercase}
+.script{font-family:var(--script);font-weight:700;font-size:1.9rem;line-height:1}
+section{position:relative;padding-block:clamp(70px,10vw,120px)}
+
+/* buttons: fill sweep */
+.btn{position:relative;overflow:hidden;isolation:isolate;display:inline-flex;align-items:center;gap:.5em;border:0;border-radius:999px;padding:.95em 1.6em;font-weight:800;background:var(--ink);color:#fff;text-decoration:none;transition:transform .25s var(--ease),color .3s}
+.btn::before{content:"";position:absolute;inset:0;background:var(--accent);transform:translateY(101%);border-radius:50% 50% 0 0;transition:transform .45s var(--ease),border-radius .45s;z-index:-1}
+.btn:hover::before{transform:none;border-radius:0}
+.btn:hover{transform:translateY(-3px) rotate(-1.5deg)}
+.btn:active{transform:scale(.96)}
+.btn.orange{background:var(--accent)}
+.btn.orange::before{background:var(--ink)}
+.btn.white{background:#fff;color:var(--ink)}
+.btn.white::before{background:var(--pop)}
+.btn.small{padding:.6em 1.1em;font-size:.92rem}
+.btn .arr{display:inline-block;transition:transform .3s var(--ease)}
+.btn:hover .arr{transform:translateX(4px)}
+
+/* announce + header */
+.announce{background:var(--ink);color:#fff;font-weight:700;font-size:.85rem;overflow:hidden;white-space:nowrap;padding-block:8px}
+.announce .track{display:flex;gap:48px;width:max-content;animation:scroll 40s linear infinite}
+.announce span::before{content:"●";color:var(--pop);margin-right:12px}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(18,61,39,.96);color:#fff;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:12px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo .mark{width:46px;height:46px;flex:none;transition:transform .6s var(--ease)}
+.logo:hover .mark{transform:rotate(360deg)}
+.wm{display:flex;flex-direction:column;line-height:.86}
+.wm-mel{font-family:var(--script);font-size:2.2rem;font-weight:700}
+.wm small{font-weight:800;font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.7)}
+.links{display:flex;gap:28px;font-weight:700}
+.links a{text-decoration:none;position:relative}
+.links a::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:3px;border-radius:3px;background:var(--accent);transform:scaleX(0);transform-origin:right;transition:transform .35s var(--ease)}
+.links a:hover::after{transform:scaleX(1);transform-origin:left}
+.cart-btn{background:var(--accent);color:#fff;border:0;border-radius:999px;padding:.65em 1.2em;font-weight:800;display:flex;gap:8px;align-items:center;transition:transform .2s}
+.cart-btn:hover{transform:scale(1.05)}
+.cart-btn.bump{animation:bump .5s var(--ease)}
+@keyframes bump{30%{transform:scale(1.25) rotate(-6deg)}60%{transform:scale(.95) rotate(3deg)}}
+.cart-count{background:#fff;color:var(--accent);border-radius:999px;min-width:22px;height:22px;display:grid;place-items:center;font-size:.8rem;padding:0 6px}
+@media (max-width:860px){.links{display:none}}
+
+/* hero */
+.hero{background:var(--tint);transition:background-color .9s var(--ease);overflow:hidden;padding-block:clamp(40px,6vw,70px) 0}
+.giant{position:absolute;left:0;right:0;top:50%;transform:translateY(-58%);pointer-events:none;overflow:hidden;z-index:0}
+.giant .track{display:flex;width:max-content;animation:scroll 26s linear infinite}
+.giant span{font-family:var(--display);font-weight:800;font-size:clamp(7rem,19vw,17rem);line-height:1;letter-spacing:-.04em;color:var(--c);opacity:.22;padding-right:.35em;white-space:nowrap;transition:color .9s}
+.hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:1.05fr .95fr;gap:30px;align-items:center;min-height:min(640px,80vh)}
+.hero h1{font-size:clamp(3.2rem,8.5vw,7rem);font-weight:800}
+.hero h1 .wob{display:inline-block;color:var(--leaf);animation:wob 3.5s ease-in-out infinite}
+@keyframes wob{50%{transform:rotate(-4deg) translateY(-4px)}}
+.now{margin-top:26px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.now-card{background:#fff;border-radius:22px;padding:14px 18px;display:flex;gap:16px;align-items:center;box-shadow:0 16px 40px -24px rgba(20,38,28,.5)}
+.now-card .dotc{width:14px;height:14px;border-radius:50%;background:var(--c);transition:background .9s}
+.now-name{font-family:var(--display);font-weight:800;font-size:1.35rem;line-height:1}
+.now-tag{font-family:var(--script);font-size:1.3rem;color:var(--muted);line-height:1}
+.swap{animation:swapIn .6s var(--ease)}
+@keyframes swapIn{from{transform:translateY(14px);opacity:.2}}
+.flav-dots{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
+.flav-dots button{width:34px;height:34px;border-radius:50%;border:3px solid #fff;background:var(--dc);box-shadow:0 4px 12px -4px rgba(0,0,0,.35);transition:transform .3s var(--ease)}
+.flav-dots button:hover{transform:scale(1.2) rotate(15deg)}
+.flav-dots button[aria-pressed="true"]{transform:scale(1.25);outline:3px solid var(--ink);outline-offset:2px}
+.lede{font-size:1.15rem;color:var(--muted);max-width:30em;margin-top:18px}
+.hero-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+.hero-stage{position:relative;display:grid;place-items:center;padding-block:20px 60px}
+.hero-stage .halo{position:absolute;width:min(440px,80vw);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#fff 0 55%,transparent 70%);opacity:.7}
+.hero-stage .b3d{width:clamp(190px,24vw,280px)}
+.slice{position:absolute;width:var(--s,70px);animation:floaty var(--d,6s) ease-in-out infinite;animation-delay:var(--dl,0s);transition:transform .3s}
+@keyframes floaty{50%{transform:translateY(-22px) rotate(25deg)}}
+.hint{font-weight:700;font-size:.85rem;color:var(--muted);position:absolute;bottom:22px;left:50%;transform:translateX(-50%);white-space:nowrap;display:none;background:#fff;padding:.35em .9em;border-radius:999px}
+.gl .hint{display:block}
+@media (max-width:860px){.hero-grid{grid-template-columns:1fr;min-height:0}.hero-stage{padding-block:10px 70px}}
+
+/* flowing waves */
+.waves{position:relative;height:clamp(50px,7vw,90px);overflow:hidden;margin-top:-1px;line-height:0}
+.waves svg{position:absolute;bottom:0;left:0;width:200%;height:100%;animation:flow 14s linear infinite}
+.waves svg.back{animation-duration:22s;opacity:.45}
+@keyframes flow{to{transform:translateX(-50%)}}
+.waves.flip{transform:scaleY(-1);margin-top:0;margin-bottom:-1px}
+@keyframes scroll{to{transform:translateX(-50%)}}
+
+/* ribbon */
+.ribbon{background:var(--leaf);color:#fff;overflow:hidden;padding-block:18px;transform:rotate(-1.5deg);margin-block:-10px;position:relative;z-index:2}
+.ribbon .track{display:flex;gap:40px;width:max-content;animation:scroll 30s linear infinite;font-family:var(--display);font-weight:800;font-size:clamp(1.3rem,2.5vw,2rem);white-space:nowrap}
+.ribbon span::after{content:"✺";margin-left:40px;color:var(--pop)}
+
+/* section heads */
+.head{display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap;margin-bottom:44px}
+.head p{color:var(--muted);max-width:34em;margin-top:14px;font-size:1.06rem}
+.filters{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:2px solid var(--ink);background:#fff;border-radius:999px;padding:.5em 1.05em;font-weight:800;font-size:.9rem;transition:transform .25s var(--ease),background .2s}
+.chip:hover{transform:translateY(-3px) rotate(-2deg)}
+.chip[aria-pressed="true"]{background:var(--ink);color:#fff}
+
+/* product cards: liquid flood on hover */
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+@media (max-width:980px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:600px){.grid{grid-template-columns:1fr}}
+.card{position:relative;isolation:isolate;overflow:hidden;border-radius:30px;background:var(--tint);display:flex;flex-direction:column;transition:transform .45s var(--ease),color .35s}
+.card::before{content:"";position:absolute;left:-15%;right:-15%;bottom:-5%;height:0;background:var(--c);border-radius:50% 50% 0 0/40px 40px 0 0;transition:height .65s var(--ease);z-index:-1}
+.card:hover::before,.card:focus-within::before{height:115%}
+.card:hover{transform:translateY(-8px) rotate(-.6deg);color:#fff}
+.card-art{position:relative;height:290px}
+.card-art .b3d{position:absolute;inset:0;display:grid;place-items:center}
+.card-art .b3d>.bottle{width:100px}
+.tag{position:absolute;left:16px;top:16px;z-index:1;background:#fff;color:var(--ink);font-weight:800;font-size:.75rem;padding:.35em .85em;border-radius:999px;transform:rotate(-4deg)}
+.card-body{padding:4px 24px 24px;display:flex;flex-direction:column;gap:10px;flex:1}
+.card-body h3{font-size:1.7rem}
+.tagline{font-family:var(--script);font-size:1.45rem;line-height:1;opacity:.75}
+.ingr{font-size:.92rem;opacity:.8}
+.perks{display:flex;gap:6px;flex-wrap:wrap}
+.perks span{font-size:.75rem;font-weight:800;background:rgba(255,255,255,.75);color:var(--ink);padding:.3em .75em;border-radius:999px}
+.buy{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto;padding-top:12px}
+.price{font-family:var(--display);font-weight:800;font-size:1.5rem;font-variant-numeric:tabular-nums}
+.price small{font-family:var(--body);font-weight:600;font-size:.8rem;opacity:.75}
+.stepper{display:flex;align-items:center;border:2px solid currentColor;border-radius:999px}
+.stepper button{border:0;background:none;width:32px;height:32px;font-size:1.1rem;font-weight:800}
+.stepper output{min-width:18px;text-align:center;font-weight:800;font-variant-numeric:tabular-nums}
+.card .btn{background:var(--ink)}
+.card:hover .btn{background:#fff;color:var(--ink)}
+
+/* benefits */
+.benefits{background:var(--bt,#FFF0C9);transition:background-color .8s var(--ease)}
+.tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:30px}
+.tab{border:2px solid var(--ink);background:#fff;border-radius:999px;padding:.55em 1.1em;font-weight:800;display:flex;gap:8px;align-items:center;transition:transform .25s var(--ease)}
+.tab:hover{transform:translateY(-3px)}
+.tab i{width:12px;height:12px;border-radius:50%;background:var(--tc)}
+.tab[aria-selected="true"]{background:var(--ink);color:#fff}
+.panel{display:grid;grid-template-columns:1.3fr .7fr;gap:40px;align-items:center}
+@media (max-width:760px){.panel{grid-template-columns:1fr}.panel .b3d{max-width:160px;margin:0 auto}}
+.panel h3{font-size:clamp(2.2rem,5vw,3.6rem)}
+.panel>div>p{color:var(--muted);margin-top:16px;max-width:38em;font-size:1.08rem}
+.pts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:24px}
+@media (max-width:760px){.pts{grid-template-columns:1fr}}
+.pt{background:#fff;border-radius:20px;padding:18px;font-weight:600;transition:transform .35s var(--ease)}
+.pt:hover{transform:translateY(-6px) rotate(1deg)}
+.pt b{display:block;font-family:var(--display);font-size:2rem;color:var(--tc);line-height:1;margin-bottom:6px}
+.found-in{margin-top:20px;font-weight:700}
+.disclaim{margin-top:10px;font-size:.78rem;color:var(--muted)}
+.panel .b3d{width:100%;max-width:230px;justify-self:center}
+
+/* bundles */
+.bundles{background:var(--mint)}
+.bundle-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+@media (max-width:980px){.bundle-grid{grid-template-columns:1fr}}
+.bundle{background:#fff;border-radius:30px;padding:28px;display:flex;flex-direction:column;gap:14px;position:relative;transition:transform .45s var(--ease),box-shadow .45s}
+.bundle:hover{transform:translateY(-10px) rotate(.8deg);box-shadow:0 30px 50px -30px rgba(20,38,28,.6)}
+.bundle.hot{outline:4px solid var(--ink)}
+.bundle .rib{position:absolute;top:-14px;right:24px;background:var(--accent);color:#fff;font-weight:800;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;padding:.45em 1em;border-radius:999px;transform:rotate(3deg)}
+.mini-row{display:flex;justify-content:center;gap:2px;height:120px;align-items:flex-end}
+.mini-row .b3d{width:46px;transition:transform .5s var(--ease)}
+.bundle:hover .mini-row .b3d:nth-child(odd){transform:translateY(-12px)}
+.bundle:hover .mini-row .b3d:nth-child(even){transform:translateY(-4px)}
+.bundle h3{font-size:1.9rem}
+.bundle ul{margin:0;padding-left:1.1em;color:var(--muted)}
+.save{font-weight:800;color:var(--leaf);font-size:.9rem}
+.byo{margin-top:36px;background:#fff;border-radius:30px;padding:clamp(22px,4vw,44px);display:grid;grid-template-columns:1fr 1.1fr;gap:36px}
+@media (max-width:860px){.byo{grid-template-columns:1fr}}
+.byo-picks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:20px}
+@media (max-width:500px){.byo-picks{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.pick{display:flex;align-items:center;gap:8px;border:2px solid var(--line);background:#fff;border-radius:14px;padding:8px 10px;text-align:left;font-weight:700;font-size:.85rem;transition:transform .25s var(--ease),border-color .2s,background .2s}
+.pick:hover{border-color:var(--pc);background:var(--pt);transform:translateY(-2px)}
+.pick:active{transform:scale(.94)}
+.pick i{width:16px;height:16px;border-radius:50%;background:var(--pc);flex:none}
+.crate{background:linear-gradient(#B07A45,#93623A);border-radius:22px;padding:16px;display:grid;grid-template-columns:repeat(6,1fr);gap:10px;box-shadow:inset 0 -10px 0 rgba(0,0,0,.15)}
+.slot{aspect-ratio:1/2.25;border-radius:10px;background:rgba(0,0,0,.18);display:grid;place-items:end center;padding-bottom:4px;position:relative}
+.slot .b3d{width:90%;animation:drop .5s var(--ease)}
+@keyframes drop{from{transform:translateY(-40px)}60%{transform:translateY(4px)}}
+.slot button{position:absolute;inset:0;background:none;border:0}
+.crate-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:18px;flex-wrap:wrap}
+.sizes{display:flex;gap:8px}
+.note{font-size:.85rem;color:var(--muted);margin-top:12px}
+
+/* mel */
+.mel{background:var(--coral);color:#fff}
+.mel .quote{color:var(--ink)}
+.mel .portrait{background:var(--mint)}
+.mel-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:56px;align-items:center}
+@media (max-width:860px){.mel-grid{grid-template-columns:1fr}}
+.portrait{position:relative;aspect-ratio:1;border-radius:50%;background:var(--pop);max-width:440px;width:100%;overflow:hidden;border:10px solid #fff;transform:rotate(-3deg);transition:transform .6s var(--ease)}
+.portrait:hover{transform:rotate(3deg) scale(1.03)}
+.portrait svg{position:absolute;inset:auto 0 0 0;width:100%}
+.portrait .ph{position:absolute;left:50%;top:18px;transform:translateX(-50%);background:#fff;font-size:.75rem;font-weight:800;padding:.35em .9em;border-radius:999px;white-space:nowrap}
+.mel p{margin-top:16px;font-size:1.1rem;max-width:36em}
+.quote{font-family:var(--display);font-weight:800;font-size:clamp(1.5rem,2.8vw,2.1rem);line-height:1.15;background:#fff;border-radius:24px;padding:22px 26px;margin-top:26px;transform:rotate(-1deg)}
+.sig{font-family:var(--script);font-size:3rem;margin-top:14px}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+@media (max-width:860px){.steps{grid-template-columns:1fr}}
+.step{border-radius:30px;padding:30px;background:var(--sb);transition:transform .45s var(--ease)}
+.step:hover{transform:translateY(-8px) rotate(-1deg)}
+.step .n{font-family:var(--display);font-weight:800;font-size:4.5rem;line-height:.9;color:#fff;-webkit-text-stroke:2px var(--ink)}
+.step h3{margin-top:12px;font-size:1.6rem}
+.step p{margin-top:8px;color:var(--muted)}
+.towns{display:flex;gap:8px;flex-wrap:wrap;margin-top:30px}
+.towns span{border:2px solid var(--ink);padding:.4em 1em;border-radius:999px;font-weight:700;font-size:.9rem;transition:background .2s,transform .25s var(--ease)}
+.towns span:hover{background:var(--pop);transform:rotate(-3deg)}
+
+/* reviews + faq */
+.reviews{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+@media (max-width:860px){.reviews{grid-template-columns:1fr}}
+.review{background:var(--blush);border-radius:30px;padding:28px;transition:transform .45s var(--ease)}
+.review:nth-child(2){background:#DFF2E4}.review:nth-child(3){background:#FFF0C9}
+.review:hover{transform:rotate(-1.5deg) translateY(-6px)}
+.review .stars{color:var(--accent);font-size:1.2rem;letter-spacing:2px}
+.review p{font-size:1.05rem;margin-top:10px}
+.review .who{margin-top:14px;font-weight:800;font-size:.9rem;color:var(--muted)}
+.faq{max-width:860px}
+details{border-bottom:2px solid var(--ink);padding-block:20px}
+summary{font-family:var(--display);font-weight:800;font-size:1.3rem;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:16px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";flex:none;width:34px;height:34px;border-radius:50%;background:var(--pop);display:grid;place-items:center;transition:transform .35s var(--ease)}
+details[open] summary::after{transform:rotate(45deg)}
+details p{color:var(--muted);margin-top:10px;max-width:46em}
+
+/* cta + footer */
+.cta{background:var(--deep);color:#fff;text-align:center;overflow:hidden}
+.cta h2{font-size:clamp(2.6rem,8vw,6rem)}
+.cta p{margin:16px auto 0;max-width:30em;font-size:1.1rem}
+.cta-row{display:flex;justify-content:center;gap:4px;height:180px;align-items:flex-end;margin-top:36px}
+.cta-row .b3d{width:64px}
+.cta .btn{margin-top:30px}
+footer{background:var(--deep);color:#fff;padding-block:56px}
+.foot{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;font-size:.92rem;color:rgba(255,255,255,.75)}
+.foot b{color:#fff;display:block;margin-bottom:6px}
+.foot .wm small{color:rgba(255,255,255,.6)}
+
+/* reveal: elements are visible at rest; .in plays a pop */
+.reveal.in{animation:rise .9s var(--ease) both}
+@keyframes rise{from{transform:translateY(40px);opacity:.3}}
+
+/* fly-to-cart */
+.fly{position:fixed;z-index:96;width:22px;height:22px;border-radius:50%;pointer-events:none;box-shadow:0 0 0 4px #fff}
+
+/* 3D */
+.b3d{position:relative;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
+.b3d:active{cursor:grabbing}
+.b3d>.bottle{width:100%;display:block}
+.gl .b3d>.bottle{visibility:hidden}
+#gl{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:45}
+
+/* drawer */
+.scrim{position:fixed;inset:0;background:rgba(20,38,28,.45);z-index:80;opacity:0;pointer-events:none;transition:opacity .3s}
+.scrim.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);background:#fff;z-index:90;transform:translateX(105%);transition:transform .45s var(--ease);display:flex;flex-direction:column;padding:calc(env(safe-area-inset-top,0px) + 20px) max(22px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 20px) 22px}
+.drawer.open{transform:none}
+.drawer-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.drawer-head h3{font-size:1.8rem}
+.x{border:0;background:var(--pop);width:40px;height:40px;border-radius:50%;font-size:1.1rem;font-weight:800;transition:transform .3s var(--ease)}
+.x:hover{transform:rotate(90deg)}
+.drawer-body{flex:1;overflow-y:auto;min-height:0;display:flex;flex-direction:column;gap:12px}
+.line-item{display:grid;grid-template-columns:46px 1fr auto;gap:12px;align-items:center;background:var(--li,#F6F6F2);border-radius:18px;padding:10px 12px}
+.line-item .sw{height:60px;display:grid;place-items:center}
+.line-item .sw .bottle{width:28px}
+.line-item b{display:block;font-size:.95rem}
+.line-item small{color:var(--muted)}
+.rm{border:0;background:none;color:var(--muted);font-size:.8rem;text-decoration:underline;padding:0}
+.empty{text-align:center;color:var(--muted);padding:40px 10px}
+.totals{border-top:2px solid var(--ink);padding-top:14px;margin-top:14px;display:grid;gap:6px;font-variant-numeric:tabular-nums}
+.totals div{display:flex;justify-content:space-between}
+.totals .grand{font-family:var(--display);font-weight:800;font-size:1.4rem}
+.progress{font-size:.85rem;color:var(--leaf);font-weight:700}
+.bar{height:8px;border-radius:9px;background:var(--line);overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--pop),var(--accent));transition:width .5s var(--ease)}
+form{display:grid;gap:12px}
+label{font-weight:700;font-size:.88rem;display:grid;gap:5px}
+input,select,textarea{font:inherit;color:var(--ink);background:#fff;border:2px solid var(--line);border-radius:14px;padding:.7em .85em;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--ink);outline:none}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.seg input{position:absolute;opacity:0;width:1px}
+.seg label{border:2px solid var(--line);border-radius:14px;padding:.7em;text-align:center;cursor:pointer;display:block}
+.seg input:checked+label{border-color:var(--ink);background:var(--ink);color:#fff}
+.seg input:focus-visible+label{outline:3px solid var(--accent)}
+.err{color:#C0362C;font-size:.85rem;font-weight:700}
+.done{text-align:center;padding:20px 6px}
+.done .bottle{width:70px;margin:0 auto;animation:wob 2s ease-in-out infinite}
+.done .big{font-family:var(--display);font-weight:800;font-size:2.1rem;margin-top:10px}
+.done p{color:var(--muted);margin-top:10px}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);transform:translate(-50%,160%);background:var(--ink);color:#fff;padding:.85em 1.4em;border-radius:999px;font-weight:800;z-index:95;transition:transform .45s var(--ease);white-space:nowrap}
+.toast.show{transform:translate(-50%,0)}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+</style>
+<style>html,body{margin:0}:root{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+
+
+<div class="announce" aria-hidden="true"><div class="track" id="announce"></div></div>
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="#top" aria-label="Mel Organic Shots home"><span id="hdrMark"></span><span class="wm"><span class="wm-mel">Mel</span><small>Organic Shots · Methuen</small></span></a>
+    <nav class="links"><a href="#shop">Shot Menu</a><a href="#bundles">Bundles</a><a href="#benefits">Benefits</a><a href="#mel">Meet Mel</a><a href="#local">Pickup</a></nav>
+    <button class="cart-btn" id="openCart" aria-label="Open your order">Order <span class="cart-count" id="cartCount">0</span></button>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero" id="hero">
+    <div class="giant" aria-hidden="true"><div class="track" id="giant"></div></div>
+    <div class="wrap hero-grid">
+      <div>
+        <p class="script" style="color:var(--accent)">hand-pressed by Mel in Methuen</p>
+        <h1>Tiny shots.<br><span class="wob">Big</span> glow.</h1>
+        <p class="lede">15 organic, cold-pressed juice shots made in small batches every week. Real roots, real fruit, nothing else.</p>
+        <div class="now">
+          <div class="now-card" id="nowCard"><span class="dotc"></span><div><div class="now-name" id="nowName"></div><div class="now-tag" id="nowTag"></div></div><span class="price" id="nowPrice"></span></div>
+          <button class="btn orange" id="nowAdd">Add to order <span class="arr">→</span></button>
+        </div>
+        <div class="flav-dots" role="group" aria-label="Pick a flavor" id="flavDots"></div>
+        <div class="hero-ctas"><a class="btn" href="#shop">See all 15 shots <span class="arr">→</span></a><a class="btn white" href="#bundles">Bundles & boxes</a></div>
+      </div>
+      <div class="hero-stage" id="heroStage">
+        <div class="halo"></div>
+        <div id="slices" aria-hidden="true"></div>
+        <div id="heroBottleWrap"></div>
+        <p class="hint">↻ Drag the bottle to spin it</p>
+      </div>
+    </div>
+    <div class="waves" aria-hidden="true">
+      <svg class="back" viewBox="0 0 2880 100" preserveAspectRatio="none"><path fill="#FFFFFF" d="M0 50 C240 95 480 5 720 50 S1200 95 1440 50 S1920 5 2160 50 S2640 95 2880 50 V100 H0Z"/></svg>
+      <svg viewBox="0 0 2880 100" preserveAspectRatio="none"><path fill="#FFFFFF" d="M0 60 C360 20 720 100 1080 60 S1440 30 1440 60 S1800 20 2160 60 S2520 100 2880 60 V100 H0Z"/></svg>
+    </div>
+  </section>
+
+  <div class="ribbon" aria-hidden="true"><div class="track" id="ribbon"></div></div>
+
+  <section id="shop">
+    <div class="wrap">
+      <div class="head reveal">
+        <div><p class="eyebrow" style="color:var(--leaf)">The shot menu</p><h2>Pick your little ritual.</h2><p>One 2 oz glass bottle, one daily dose. Hover a shot to pour it, drag the bottle to spin it.</p></div>
+        <div class="filters" role="group" aria-label="Filter shots by goal" id="filters"></div>
+      </div>
+      <div class="grid" id="products"></div>
+    </div>
+  </section>
+
+  <section class="benefits" id="benefits">
+    <div class="wrap">
+      <div class="head reveal"><div><p class="eyebrow" style="color:var(--leaf)">What's inside</p><h2>Why these roots work.</h2><p>Mel picks every ingredient for a reason. Tap one.</p></div></div>
+      <div class="tabs" role="tablist" id="tabs"></div>
+      <div class="panel" role="tabpanel" id="panel"></div>
+    </div>
+  </section>
+
+  <div class="waves" aria-hidden="true" style="background:var(--bt,#FFF0C9)" id="benWave">
+    <svg class="back" viewBox="0 0 2880 100" preserveAspectRatio="none"><path fill="#DDF3E4" d="M0 50 C240 95 480 5 720 50 S1200 95 1440 50 S1920 5 2160 50 S2640 95 2880 50 V100 H0Z"/></svg>
+    <svg viewBox="0 0 2880 100" preserveAspectRatio="none"><path fill="#DDF3E4" d="M0 60 C360 20 720 100 1080 60 S1440 30 1440 60 S1800 20 2160 60 S2520 100 2880 60 V100 H0Z"/></svg>
+  </div>
+  <section class="bundles" id="bundles" style="padding-top:40px">
+    <div class="wrap">
+      <div class="head reveal"><div><p class="eyebrow">Bundles</p><h2>Stock the fridge.<br>Save a little.</h2><p>Most regulars take one a day. Bundles make that easy and knock a few dollars off.</p></div></div>
+      <div class="bundle-grid" id="bundleGrid"></div>
+      <div class="byo reveal" id="byo">
+        <div>
+          <p class="eyebrow" style="color:var(--leaf)">Build your own box</p>
+          <h3 style="font-size:clamp(2rem,4.5vw,2.8rem);margin-top:8px">Mix any shots you like.</h3>
+          <p style="color:var(--muted);margin-top:10px">Tap a flavor and watch it drop into the crate. Tap a bottle in the crate to take it out.</p>
+          <div class="byo-picks" id="byoPicks"></div>
+        </div>
+        <div>
+          <div class="crate" id="crate" aria-label="Your custom box"></div>
+          <div class="crate-foot">
+            <div class="sizes" role="group" aria-label="Box size" id="sizes"></div>
+            <div style="display:flex;gap:12px;align-items:center"><span class="price" id="byoPrice"></span><button class="btn orange small" id="byoAdd">Add box</button></div>
+          </div>
+          <p class="note" id="byoNote"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="waves flip" aria-hidden="true" style="background:var(--coral)">
+    <svg viewBox="0 0 2880 100" preserveAspectRatio="none"><path fill="#DDF3E4" d="M0 60 C360 20 720 100 1080 60 S1440 30 1440 60 S1800 20 2160 60 S2520 100 2880 60 V100 H0Z"/></svg>
+  </div>
+
+  <section class="mel" id="mel">
+    <div class="wrap mel-grid">
+      <div class="portrait reveal" role="img" aria-label="Photo of Melissa placeholder">
+        <span class="ph">Mel's photo goes here</span>
+        <svg viewBox="0 0 400 300" aria-hidden="true"><circle cx="200" cy="125" r="64" fill="#14261C"/><path d="M50 300c12-92 74-132 150-132s138 40 150 132z" fill="#14261C"/></svg>
+      </div>
+      <div class="reveal">
+        <p class="eyebrow">Meet Mel</p>
+        <h2 style="margin-top:10px">It started with one tired winter and a cheap juicer.</h2>
+        <p>Hi, I'm Melissa. For years I've pressed shots for my family, my friends, and anyone at work who'd let me hand them one. Ginger for the mornings, turmeric for the achy days, elderberry when everyone around me was sniffling.</p>
+        <p>People kept asking where they could buy them. So now you can. I still pick the produce, peel the ginger and press every batch myself in Methuen. If I wouldn't give it to my own family, it doesn't go in a bottle.</p>
+        <p class="quote">“I'd rather sell you a shot you actually feel than a juice that just looks pretty.”</p>
+        <p class="sig">— Mel</p>
+      </div>
+    </div>
+  </section>
+  <div class="waves" aria-hidden="true" style="background:var(--coral)">
+    <svg class="back" viewBox="0 0 2880 100" preserveAspectRatio="none"><path fill="#FFFFFF" d="M0 50 C240 95 480 5 720 50 S1200 95 1440 50 S1920 5 2160 50 S2640 95 2880 50 V100 H0Z"/></svg>
+    <svg viewBox="0 0 2880 100" preserveAspectRatio="none"><path fill="#FFFFFF" d="M0 60 C360 20 720 100 1080 60 S1440 30 1440 60 S1800 20 2160 60 S2520 100 2880 60 V100 H0Z"/></svg>
+  </div>
+
+  <section id="local">
+    <div class="wrap">
+      <div class="head reveal"><div><p class="eyebrow" style="color:var(--leaf)">Ordering in the Merrimack Valley</p><h2>Pressed Monday.<br>In your fridge Tuesday.</h2></div></div>
+      <div class="steps">
+        <div class="step reveal" style="--sb:#FFF0C9"><span class="n">1</span><h3>Order by Sunday</h3><p>Pick shots or a bundle and check out. Mel presses once a week so it's always fresh.</p></div>
+        <div class="step reveal" style="--sb:#DFF2E4"><span class="n">2</span><h3>Pickup or delivery</h3><p>Free pickup in Methuen, or local delivery Tuesday to Thursday. Free delivery over $40.</p></div>
+        <div class="step reveal" style="--sb:#FFE3EC"><span class="n">3</span><h3>Shake, shoot, repeat</h3><p>Keep them cold, drink within 4 days, and bring your empties back for $0.25 off each.</p></div>
+      </div>
+      <div class="towns"><span>Methuen</span><span>Lawrence</span><span>Andover</span><span>North Andover</span><span>Haverhill</span><span>Dracut</span><span>Salem, NH</span><span>Pelham, NH</span></div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="head reveal"><div><p class="eyebrow" style="color:var(--leaf)">Regulars say</p><h2>The fridge fans.</h2></div></div>
+      <div class="reviews">
+        <div class="review reveal"><div class="stars">★★★★★</div><p>[Customer review goes here. One or two lines from a real regular about their favorite shot.]</p><p class="who">— Name, Town</p></div>
+        <div class="review reveal"><div class="stars">★★★★★</div><p>[Customer review goes here.]</p><p class="who">— Name, Town</p></div>
+        <div class="review reveal"><div class="stars">★★★★★</div><p>[Customer review goes here.]</p><p class="who">— Name, Town</p></div>
+      </div>
+      <p class="note">Placeholder slots: replace with real customer words only.</p>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="head reveal"><div><p class="eyebrow" style="color:var(--leaf)">Questions</p><h2>Good to know.</h2></div></div>
+      <div class="faq">
+        <details><summary>How long do the shots last?</summary><p>They're raw and unpasteurized, so keep them cold and drink within 4 days of pickup. You can freeze them for up to a month; thaw in the fridge overnight.</p></details>
+        <details><summary>When should I take a shot?</summary><p>Most people take one in the morning, before or with breakfast. Ginger Fire and Fire Cider are strong, so start with half if you're new.</p></details>
+        <details><summary>Is everything organic?</summary><p>Yes. Mel buys certified organic produce and raw local honey. The ingredient list on each bottle is the whole recipe.</p></details>
+        <details><summary>Can I set up a weekly order?</summary><p>Yes. Choose the Weekly Ritual bundle and write "repeat weekly" in your order notes. Mel will confirm by text.</p></details>
+        <details><summary>I'm pregnant, nursing or on medication. Are these safe?</summary><p>Ingredients like turmeric, ginger, garlic and elderberry can interact with some medications. Please check with your doctor first. Mel is happy to tell you exactly what's in each shot.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <div class="waves" aria-hidden="true">
+    <svg class="back" viewBox="0 0 2880 100" preserveAspectRatio="none"><path fill="#123D27" d="M0 50 C240 95 480 5 720 50 S1200 95 1440 50 S1920 5 2160 50 S2640 95 2880 50 V100 H0Z"/></svg>
+    <svg viewBox="0 0 2880 100" preserveAspectRatio="none"><path fill="#123D27" d="M0 60 C360 20 720 100 1080 60 S1440 30 1440 60 S1800 20 2160 60 S2520 100 2880 60 V100 H0Z"/></svg>
+  </div>
+  <section class="cta" style="padding-top:30px">
+    <div class="wrap">
+      <h2 class="reveal">Your fridge is missing<br>a little fire.</h2>
+      <p>Start with the Starter Six: one of each bestseller, so you find your favorite.</p>
+      <div class="cta-row" id="ctaRow"></div>
+      <button class="btn white" id="ctaAdd">Add the Starter Six · $24 <span class="arr">→</span></button>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div><div style="display:flex;gap:10px;align-items:center"><span id="footMark"></span><span class="wm"><span class="wm-mel">Mel</span><small>Organic Shots</small></span></div><p style="margin-top:12px">Small-batch organic juice shots<br>Methuen, Massachusetts</p></div>
+    <div><b>Pickup</b>Methuen, MA (address sent with order)<br>Tue–Thu, 4–7pm</div>
+    <div><b>Say hi</b>hello@melorganicshots.com<br>@melorganicshots</div>
+    <div style="max-width:300px;font-size:.78rem">These statements have not been evaluated by the FDA. Our products are not intended to diagnose, treat, cure or prevent any disease.</div>
+  </div>
+</footer>
+
+<canvas id="gl" aria-hidden="true"></canvas>
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="Your order" aria-hidden="true">
+  <div class="drawer-head"><h3 id="drawerTitle">Your order</h3><button class="x" id="closeCart" aria-label="Close">✕</button></div>
+  <div class="drawer-body" id="drawerBody"></div>
+</aside>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const SHOTS=[
+ {id:"ginger",name:"Ginger Fire",tagline:"the wake-up call",c:"#E9A520",tint:"#FFF0C9",ingr:"Ginger root, lemon, raw honey, cayenne",perks:["Digestion","Energy"],goals:["energy","digest"],tag:"Bestseller"},
+ {id:"turmeric",name:"Golden Sunrise",tagline:"for the achy days",c:"#F07E1E",tint:"#FFE2C7",ingr:"Turmeric root, orange, ginger, black pepper",perks:["Joints","Recovery"],goals:["recovery"],tag:"Mel's pick"},
+ {id:"beet",name:"Beet Street",tagline:"pre-workout, the earthy way",c:"#B0204A",tint:"#F8D3DD",ingr:"Beet, green apple, lemon, ginger",perks:["Stamina","Circulation"],goals:["energy","recovery"]},
+ {id:"green",name:"Green Reset",tagline:"a garden in one gulp",c:"#5E9A2A",tint:"#DDEFC9",ingr:"Wheatgrass, cucumber, lemon, mint",perks:["Greens","Detox"],goals:["digest"]},
+ {id:"elder",name:"Elder Shield",tagline:"sniffle season staple",c:"#5A2350",tint:"#E8D2E4",ingr:"Elderberry, ginger, lemon, cinnamon, raw honey",perks:["Immunity","Antioxidants"],goals:["immunity"],tag:"Winter"},
+ {id:"citrus",name:"Pink Citrus",tagline:"vitamin C, loudly",c:"#EF5B4C",tint:"#FFD9D3",ingr:"Pink grapefruit, orange, lemon, lime",perks:["Immunity","Skin glow"],goals:["immunity","energy"]},
+ {id:"pineapple",name:"Pineapple Glow",tagline:"sunshine with a bite",c:"#E8B820",tint:"#FFF4C2",ingr:"Pineapple, turmeric, ginger, black pepper",perks:["Recovery","Digestion"],goals:["recovery","digest"]},
+ {id:"firecider",name:"Fire Cider",tagline:"grandma's winter tonic",c:"#C2471B",tint:"#FAD9C9",ingr:"Apple cider vinegar, horseradish, garlic, ginger, onion, raw honey",perks:["Immunity","Sinus"],goals:["immunity"],tag:"Bold"},
+ {id:"acv",name:"Apple Cider Kick",tagline:"the gut's morning stretch",c:"#C98B2E",tint:"#F6E3C4",ingr:"Raw apple cider vinegar, green apple, lemon, cinnamon",perks:["Gut","Blood sugar"],goals:["digest"]},
+ {id:"seamoss",name:"Sea Moss Calm",tagline:"mineral-rich and mellow",c:"#6E9C80",tint:"#DDEDE3",ingr:"Wildcrafted sea moss, coconut water, lime, raw honey",perks:["Minerals","Skin"],goals:["calm","recovery"]},
+ {id:"blue",name:"Blue Lagoon",tagline:"the one people photograph",c:"#2C8FC9",tint:"#D3EAF7",ingr:"Blue spirulina, pineapple, lemon, coconut water",perks:["Antioxidants","Hydration"],goals:["energy","calm"],tag:"New"},
+ {id:"carrot",name:"Carrot Zing",tagline:"beta-carotene on fire",c:"#F28C28",tint:"#FFE3C8",ingr:"Carrot, orange, ginger, turmeric",perks:["Eyes & skin","Immunity"],goals:["immunity"]},
+ {id:"garlic",name:"Garlic Guard",tagline:"not for first dates",c:"#A8914F",tint:"#F1EAD7",ingr:"Garlic, oregano, ginger, lemon, cayenne",perks:["Immunity","Heart"],goals:["immunity"]},
+ {id:"aloe",name:"Aloe Soothe",tagline:"cool, calm, collected",c:"#5FAF7E",tint:"#E2F3E8",ingr:"Inner-leaf aloe vera, cucumber, lime, mint",perks:["Gut","Hydration"],goals:["digest","calm"]},
+ {id:"cranberry",name:"Cape Cranberry",tagline:"a little Massachusetts in a bottle",c:"#9E1B32",tint:"#F5D3D9",ingr:"Massachusetts cranberry, apple, ginger, lemon",perks:["Antioxidants","Urinary health"],goals:["immunity"],tag:"Local"}
+];
+const BENEFITS=[
+ {k:"Ginger",c:"#E9A520",in:["ginger","turmeric","beet","elder","pineapple","firecider","carrot","garlic"],h:"Ginger root",p:"The spicy backbone of Mel's lineup. Ginger has been used for centuries to settle the stomach and warm the body from the inside.",pts:["Traditionally used to ease nausea and support digestion","Contains gingerol, a compound studied for anti-inflammatory effects","That kick wakes you up without caffeine"]},
+ {k:"Turmeric",c:"#F07E1E",in:["turmeric","pineapple","carrot"],h:"Turmeric + black pepper",p:"Curcumin is turmeric's active compound. On its own the body absorbs very little, which is why Mel always adds black pepper.",pts:["Curcumin is widely studied for joint comfort and inflammation","Piperine in black pepper helps the body absorb curcumin","A favorite after workouts and long shifts"]},
+ {k:"Beet",c:"#B0204A",in:["beet"],h:"Beetroot",p:"Beets are naturally rich in nitrates, which the body turns into nitric oxide. Athletes drink beet juice before training for exactly this reason.",pts:["Nitrates support healthy blood flow","Linked to better endurance in sports studies","Packed with folate and potassium"]},
+ {k:"Elderberry",c:"#5A2350",in:["elder"],h:"Elderberry",p:"Deep purple berries that New England grandmothers have turned into syrup for generations, now in a shot.",pts:["Rich in anthocyanins, a type of antioxidant","A traditional go-to during cold and flu season","Paired with raw honey to soothe"]},
+ {k:"Citrus",c:"#EF5B4C",in:["citrus","ginger","green","elder"],h:"Lemon, orange & grapefruit",p:"Fresh citrus brightens every recipe and brings a solid dose of vitamin C, pressed whole the same day.",pts:["Vitamin C supports normal immune function","Helps your body absorb iron from plant foods","Keeps the stronger roots tasting fresh"]},
+ {k:"Vinegar & garlic",c:"#C2471B",in:["firecider","acv","garlic"],h:"Apple cider vinegar & garlic",p:"The old-school folk remedies. Fire cider has been brewed in New England kitchens for generations, and raw ACV with the mother is its sharper cousin.",pts:["Raw ACV is linked to steadier blood sugar after meals","Garlic contains allicin, studied for heart and immune support","Bold and sharp: chase it with water"]},
+ {k:"Sea moss",c:"#6E9C80",in:["seamoss","blue","aloe"],h:"Sea moss, spirulina & aloe",p:"Mel's calmer side of the menu. Ocean minerals, blue algae and cooling aloe for days that need less fire.",pts:["Sea moss is a natural source of iodine and minerals","Blue spirulina gets its color from phycocyanin, an antioxidant","Aloe is traditionally used to soothe the gut"]},
+ {k:"Wheatgrass",c:"#5E9A2A",in:["green"],h:"Wheatgrass & greens",p:"Young wheat shoots, pressed raw. Earthy, grassy, and the reason Green Reset tastes like a garden.",pts:["Source of chlorophyll, vitamins A, C and E","Naturally gluten-free when juiced","Cucumber and mint keep it light"]}
+];
+function logoMark(cls="mark"){
+ return `<svg class="${cls}" viewBox="0 0 48 48" aria-hidden="true">
+  <circle cx="24" cy="24" r="23" fill="#FF6A1F"/>
+  <circle cx="24" cy="24" r="19.5" fill="none" stroke="#FFFDF7" stroke-width="1" stroke-dasharray="2 2.6" opacity=".7"/>
+  <path d="M24 10c0 0-9 11-9 17.5a9 9 0 0 0 18 0C33 21 24 10 24 10z" fill="#FFFDF7"/>
+  <path d="M24 17c0 0-5 6.5-5 10.2a5 5 0 0 0 10 0C29 23.5 24 17 24 17z" fill="#F2B233"/>
+  <path d="M25 11c3-5 9-6 12-5-1 5-6 8-12 5z" fill="#2F7D4A"/>
+  <path d="M25.5 10.6c3-2.3 6.5-3.4 9.5-3.6" stroke="#FFFDF7" stroke-width=".7" fill="none" opacity=".8"/>
+ </svg>`;
+}
+function bottle(color,label){
+ const words=(label||"").split(" "),h=Math.ceil(words.length/2),l1=words.slice(0,h).join(" "),l2=words.slice(h).join(" ");
+ return `<svg class="bottle" viewBox="0 0 60 130" aria-hidden="true">
+  <rect x="21" y="2" width="18" height="14" rx="3" fill="#1d2a22"/>
+  <rect x="19" y="13" width="22" height="5" rx="2" fill="#2d3c32"/>
+  <path d="M22 18h16v10c0 4 12 8 12 18v72c0 6-4 10-10 10H20c-6 0-10-4-10-10V46c0-10 12-14 12-18z" fill="rgba(255,255,255,.35)" stroke="rgba(0,0,0,.25)" stroke-width="1.5"/>
+  <path d="M12 50h36v68c0 5-3 8-8 8H20c-5 0-8-3-8-8z" fill="${color}"/>
+  <rect x="12" y="60" width="36" height="50" fill="#FFFDF7"/>
+  <g transform="translate(23.5 62.5) scale(.27)">
+   <circle cx="24" cy="24" r="23" fill="#FF6A1F"/><path d="M24 10c0 0-9 11-9 17.5a9 9 0 0 0 18 0C33 21 24 10 24 10z" fill="#FFFDF7"/><path d="M25 11c3-5 9-6 12-5-1 5-6 8-12 5z" fill="#2F7D4A"/>
+  </g>
+  <text x="30" y="83" text-anchor="middle" font-family="Caveat,cursive" font-weight="600" font-size="11" fill="#173326">Mel</text>
+  <text x="30" y="88.5" text-anchor="middle" font-family="Figtree,Arial" font-weight="700" font-size="2.6" letter-spacing=".5" fill="#4F6656">ORGANIC SHOTS</text>
+  ${l1?`<rect x="15" y="91" width="30" height="${l2?14:9}" rx="2" fill="${color}"/>
+  <text x="30" y="${l2?96.6:97}" text-anchor="middle" font-family="Bricolage Grotesque,Arial" font-weight="800" font-size="4.3" fill="#fff">${l1.toUpperCase()}</text>`:""}
+  ${l2?`<text x="30" y="101.8" text-anchor="middle" font-family="Bricolage Grotesque,Arial" font-weight="800" font-size="4.3" fill="#fff">${l2.toUpperCase()}</text>`:""}
+  <text x="30" y="${l2?108.6:106}" text-anchor="middle" font-family="Figtree,Arial" font-weight="600" font-size="2.6" fill="#4F6656">2 FL OZ · METHUEN MA</text>
+  <rect x="15" y="52" width="4" height="64" rx="2" fill="rgba(255,255,255,.35)"/>
+ </svg>`;
+}
+function b3(id){const x=byId[id];return `<div class="b3d" data-b="${id}">${bottle(x.c,x.name)}</div>`}
+
+
+const PRICE=4.5;
+const BUNDLES=[
+ {id:"starter",name:"Starter Six",price:24,items:["ginger","turmeric","blue","elder","beet","cranberry"],desc:["One of six bestsellers","Find your favorite","Great as a gift"],note:"Save $3"},
+ {id:"weekly",name:"Weekly Ritual",price:52,items:["ginger","turmeric","elder","citrus","green","beet","pineapple","ginger","turmeric","elder","citrus","green","beet","pineapple"],desc:["14 shots, 2 a day for a week","Mel's rotating favorites","Can repeat every week"],note:"Save $11",hot:true},
+ {id:"immunity",name:"Immunity Six",price:25,items:["elder","firecider","citrus","garlic","elder","cranberry"],desc:["Elder Shield, Fire Cider, Pink Citrus and more","Built for cold & flu season","New England winter tested"],note:"Save $2"}
+];
+const GOALS=[["all","All 15"],["energy","Energy"],["immunity","Immunity"],["digest","Gut"],["recovery","Recovery"],["calm","Calm"]];
+const FEATURED=["ginger","blue","beet","turmeric","cranberry","green","pineapple"];
+const byId=Object.fromEntries(SHOTS.map(s=>[s.id,s]));
+const $=s=>document.querySelector(s);
+const money=n=>"$"+n.toFixed(2);
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+function sliceSvg(c){return `<svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="29" fill="${c}"/><circle cx="30" cy="30" r="24" fill="#fff" opacity=".55"/><g stroke="${c}" stroke-width="2.4">${[0,45,90,135].map(a=>`<line x1="30" y1="8" x2="30" y2="52" transform="rotate(${a} 30 30)"/>`).join("")}</g><circle cx="30" cy="30" r="4" fill="${c}"/></svg>`}
+
+/* static bits */
+const ann=["Free pickup in Methuen","Order by Sunday for this week's press","Free local delivery over $40","100% organic, never pasteurized","Bring back your bottles for $0.25 off"];
+$("#announce").innerHTML=[...ann,...ann].map(t=>`<span>${t}</span>`).join("");
+const rib=["15 organic shots","Pressed by Mel","Ginger Fire","Blue Lagoon","Cape Cranberry","Fire Cider","No added sugar","Glass bottles"];
+$("#ribbon").innerHTML=[...rib,...rib].map(t=>`<span>${t}</span>`).join("");
+$("#hdrMark").outerHTML=logoMark();$("#footMark").outerHTML=logoMark();
+$("#ctaRow").innerHTML=BUNDLES[0].items.map(i=>b3(i)).join("");
+
+/* cart state */
+let cart={};
+try{cart=JSON.parse(localStorage.getItem("melCart2")||"{}")||{}}catch(e){cart={}}
+const save=()=>{try{localStorage.setItem("melCart2",JSON.stringify(cart))}catch(e){}};
+let customBoxes=0;
+const boxPrice=n=>n>=12?n*4:n*PRICE-3;
+function summarize(items){const c={};items.forEach(i=>c[i]=(c[i]||0)+1);return Object.entries(c).map(([k,v])=>v+"× "+byId[k].name).join(", ")}
+function itemInfo(key){
+ if(key.startsWith("shot:")){const s=byId[key.slice(5)];return{name:s.name,sub:"2 oz shot",price:PRICE,color:s.c,tint:s.tint,label:s.name}}
+ if(key.startsWith("bundle:")){const b=BUNDLES.find(b=>b.id===key.slice(7));return{name:b.name,sub:b.items.length+" shots",price:b.price,color:byId[b.items[0]].c,tint:byId[b.items[0]].tint,label:b.name}}
+ if(key.startsWith("box:")){const d=JSON.parse(decodeURIComponent(key.slice(4)));return{name:"Custom box of "+d.items.length,sub:summarize(d.items),price:boxPrice(d.items.length),color:byId[d.items[0]].c,tint:byId[d.items[0]].tint,label:"Custom Box"}}
+}
+function subtotal(){return Object.entries(cart).reduce((t,[k,q])=>t+itemInfo(k).price*q,0)}
+function countAll(){return Object.values(cart).reduce((a,b)=>a+b,0)}
+function add(key,n=1,fromEl){cart[key]=(cart[key]||0)+n;if(cart[key]<=0)delete cart[key];save();renderCart();if(fromEl&&n>0)fly(fromEl,itemInfo(key).color)}
+function fly(fromEl,color){
+ const btn=$("#openCart");const a=fromEl.getBoundingClientRect(),b=btn.getBoundingClientRect();
+ if(reduce||!document.body.animate){btn.classList.remove("bump");void btn.offsetWidth;btn.classList.add("bump");return}
+ const d=document.createElement("div");d.className="fly";d.style.background=color;d.style.left=(a.left+a.width/2-11)+"px";d.style.top=(a.top+a.height/2-11)+"px";document.body.appendChild(d);
+ const dx=b.left+b.width/2-(a.left+a.width/2),dy=b.top+b.height/2-(a.top+a.height/2);
+ d.animate([{transform:"translate(0,0) scale(1)"},{transform:`translate(${dx*.5}px,${dy-120}px) scale(1.4)`},{transform:`translate(${dx}px,${dy}px) scale(.4)`}],{duration:750,easing:"cubic-bezier(.5,0,.3,1)"}).onfinish=()=>{d.remove();btn.classList.remove("bump");void btn.offsetWidth;btn.classList.add("bump")};
+}
+let toastT;function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),1800)}
+
+/* hero flavor switcher */
+let heroIdx=0,heroTimer;
+$("#flavDots").innerHTML=FEATURED.map((id,i)=>`<button style="--dc:${byId[id].c}" data-h="${i}" aria-label="${byId[id].name}" aria-pressed="${i===0}"></button>`).join("");
+function setHero(i,kick){
+ heroIdx=(i+FEATURED.length)%FEATURED.length;const s=byId[FEATURED[heroIdx]];const hero=$("#hero");
+ hero.style.setProperty("--tint",s.tint);hero.style.setProperty("--c",s.c);
+ $("#giant").innerHTML=Array(6).fill(`<span>${s.name}</span>`).join("");
+ ["nowName","nowTag","nowPrice"].forEach(id=>{const e=$("#"+id);e.classList.remove("swap");void e.offsetWidth;e.classList.add("swap")});
+ $("#nowName").textContent=s.name;$("#nowTag").textContent=s.tagline;$("#nowPrice").textContent=money(PRICE);
+ document.querySelectorAll("#flavDots button").forEach((b,j)=>b.setAttribute("aria-pressed",j===heroIdx));
+ const wrap=$("#heroBottleWrap");
+ if(!wrap.firstChild){wrap.innerHTML=b3(s.id);wrap.firstChild.dataset.hero="1"}
+ else{wrap.firstChild.dataset.b=s.id;wrap.firstChild.innerHTML=bottle(s.c,s.name);if(kick&&window.kickBottle)window.kickBottle(wrap.firstChild)}
+ const pos=[[8,12,80,7],[78,8,56,5.5],[84,62,70,8],[4,66,52,6.5]];
+ $("#slices").innerHTML=pos.map(([x,y,sz,d],k)=>`<div class="slice" style="left:${x}%;top:${y}%;--s:${sz}px;--d:${d}s;--dl:-${k*1.3}s">${sliceSvg(k%2?s.c:"#FF5A1F")}</div>`).join("");
+}
+function autoHero(){clearInterval(heroTimer);if(!reduce)heroTimer=setInterval(()=>{if(!$("#hero").matches(":hover"))setHero(heroIdx+1,true)},4200)}
+$("#flavDots").addEventListener("click",e=>{const b=e.target.closest("[data-h]");if(!b)return;setHero(+b.dataset.h,true);autoHero()});
+$("#nowAdd").addEventListener("click",e=>{const id=FEATURED[heroIdx];add("shot:"+id,1,$("#heroBottleWrap"));toast("Added "+byId[id].name)});
+$("#ctaAdd").addEventListener("click",()=>{add("bundle:starter",1,$("#ctaRow"));toast("Added Starter Six")});
+setHero(0);autoHero();
+
+/* products */
+let goal="all";const qtyPick={};
+$("#filters").innerHTML=GOALS.map(([g,l])=>`<button class="chip" data-g="${g}" aria-pressed="${g==="all"}">${l}</button>`).join("");
+$("#filters").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;goal=b.dataset.g;document.querySelectorAll("#filters .chip").forEach(c=>c.setAttribute("aria-pressed",c===b));renderProducts(true)});
+function renderProducts(anim){
+ $("#products").innerHTML=SHOTS.filter(s=>goal==="all"||s.goals.includes(goal)).map((s,i)=>{const q=qtyPick[s.id]||1;return`
+ <article class="card${anim?" reveal in":""}" style="--tint:${s.tint};--c:${s.c};${anim?`animation-delay:${i*50}ms`:""}">
+  <div class="card-art">${s.tag?`<span class="tag">${s.tag}</span>`:""}${b3(s.id)}</div>
+  <div class="card-body">
+   <h3>${s.name}</h3><p class="tagline">${s.tagline}</p>
+   <p class="ingr">${s.ingr}</p>
+   <div class="perks">${s.perks.map(p=>`<span>${p}</span>`).join("")}</div>
+   <div class="buy">
+    <span class="price">${money(PRICE)} <small>/ 2 oz</small></span>
+    <div style="display:flex;gap:8px;align-items:center">
+     <div class="stepper"><button data-dec="${s.id}" aria-label="Fewer">−</button><output id="q-${s.id}">${q}</output><button data-inc="${s.id}" aria-label="More">+</button></div>
+     <button class="btn small" data-add="${s.id}">Add</button>
+    </div>
+   </div>
+  </div></article>`}).join("");
+}
+$("#products").addEventListener("click",e=>{
+ const t=e.target.closest("button");if(!t)return;
+ if(t.dataset.inc){qtyPick[t.dataset.inc]=(qtyPick[t.dataset.inc]||1)+1;$("#q-"+t.dataset.inc).textContent=qtyPick[t.dataset.inc]}
+ if(t.dataset.dec){qtyPick[t.dataset.dec]=Math.max(1,(qtyPick[t.dataset.dec]||1)-1);$("#q-"+t.dataset.dec).textContent=qtyPick[t.dataset.dec]}
+ if(t.dataset.add){const q=qtyPick[t.dataset.add]||1;add("shot:"+t.dataset.add,q,t.closest(".card").querySelector(".b3d"));toast(`Added ${q} × ${byId[t.dataset.add].name}`)}
+});
+renderProducts();
+
+/* bundles */
+$("#bundleGrid").innerHTML=BUNDLES.map(b=>`
+ <div class="bundle reveal ${b.hot?"hot":""}">${b.hot?'<span class="rib">Most popular</span>':""}
+  <div class="mini-row">${b.items.slice(0,6).map(i=>b3(i)).join("")}</div>
+  <h3>${b.name}</h3>
+  <ul>${b.desc.map(d=>`<li>${d}</li>`).join("")}</ul>
+  <div class="buy"><div><span class="price">${money(b.price)}</span><div class="save">${b.note} vs. singles</div></div><button class="btn orange small" data-bundle="${b.id}">Add bundle</button></div>
+ </div>`).join("");
+$("#bundleGrid").addEventListener("click",e=>{const t=e.target.closest("[data-bundle]");if(!t)return;add("bundle:"+t.dataset.bundle,1,t.closest(".bundle").querySelector(".mini-row"));toast("Added "+BUNDLES.find(b=>b.id===t.dataset.bundle).name)});
+
+/* build your own */
+let boxSize=12,box=[],lastDrop=-1;
+function renderByo(){
+ $("#sizes").innerHTML=[6,12].map(n=>`<button class="chip" data-size="${n}" aria-pressed="${n===boxSize}">${n} shots</button>`).join("");
+ $("#crate").innerHTML=Array.from({length:boxSize},(_,i)=>{const s=box[i]&&byId[box[i]];return`<div class="slot">${s?(i===lastDrop?b3(box[i]):b3(box[i]).replace('class="b3d"','class="b3d" style="animation:none"'))+`<button data-rm="${i}" aria-label="Remove ${s.name}"></button>`:""}</div>`}).join("");
+ $("#byoPrice").textContent=money(boxPrice(boxSize));
+ const left=boxSize-box.length;
+ $("#byoNote").textContent=left?`${left} spot${left>1?"s":""} left. Fill the crate to add it.`:`Full! ${summarize(box)}`;
+ $("#byoAdd").disabled=!!left;$("#byoAdd").style.opacity=left?.45:1;
+}
+$("#byoPicks").innerHTML=SHOTS.map(s=>`<button class="pick" data-pick="${s.id}" style="--pc:${s.c};--pt:${s.tint}"><i></i>${s.name}</button>`).join("");
+$("#byoPicks").addEventListener("click",e=>{const t=e.target.closest("[data-pick]");if(!t)return;if(box.length<boxSize){box.push(t.dataset.pick);lastDrop=box.length-1;renderByo()}else toast("Crate is full")});
+$("#crate").addEventListener("click",e=>{const t=e.target.closest("[data-rm]");if(!t)return;box.splice(+t.dataset.rm,1);lastDrop=-1;renderByo()});
+$("#sizes").addEventListener("click",e=>{const t=e.target.closest("[data-size]");if(!t)return;boxSize=+t.dataset.size;box=box.slice(0,boxSize);lastDrop=-1;renderByo()});
+$("#byoAdd").addEventListener("click",()=>{if(box.length<boxSize)return;add("box:"+encodeURIComponent(JSON.stringify({items:[...box].sort(),n:++customBoxes})),1,$("#crate"));toast("Custom box added");box=[];lastDrop=-1;renderByo()});
+renderByo();
+
+/* benefits */
+let benIdx=0;
+function renderBen(){
+ const b=BENEFITS[benIdx],sec=$("#benefits"),tint=byId[b.in[0]].tint;
+ sec.style.setProperty("--bt",tint);$("#benWave").style.setProperty("--bt",tint);
+ $("#tabs").innerHTML=BENEFITS.map((x,i)=>`<button class="tab" role="tab" aria-selected="${i===benIdx}" data-i="${i}" style="--tc:${x.c}"><i></i>${x.k}</button>`).join("");
+ $("#panel").style.setProperty("--tc",b.c);
+ $("#panel").innerHTML=`<div class="swap"><h3>${b.h}</h3><p>${b.p}</p>
+  <div class="pts">${b.pts.map((p,i)=>`<div class="pt"><b>0${i+1}</b>${p}</div>`).join("")}</div>
+  <p class="found-in">Found in: ${b.in.map(i=>byId[i].name).join(", ")}</p>
+  <p class="disclaim">General wellness information, not medical advice.</p></div>${b3(b.in[0])}`;
+}
+$("#tabs").addEventListener("click",e=>{const t=e.target.closest("[data-i]");if(!t)return;benIdx=+t.dataset.i;renderBen()});
+renderBen();
+
+/* reveal on scroll (content is visible at rest; .in adds a pop) */
+if("IntersectionObserver" in window&&!reduce){
+ const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add("in");io.unobserve(en.target)}}),{threshold:.15});
+ document.querySelectorAll(".reveal").forEach(el=>{const r=el.getBoundingClientRect();if(r.top>innerHeight)io.observe(el)});
+}
+
+/* drawer / order page */
+let view="cart",method="pickup";const FREE=40,DELIV=5;
+function openDrawer(v="cart"){view=v;renderCart();$("#drawer").classList.add("open");$("#scrim").classList.add("open");$("#drawer").setAttribute("aria-hidden","false")}
+function closeDrawer(){$("#drawer").classList.remove("open");$("#scrim").classList.remove("open");$("#drawer").setAttribute("aria-hidden","true")}
+$("#openCart").onclick=()=>openDrawer("cart");$("#closeCart").onclick=closeDrawer;$("#scrim").onclick=closeDrawer;
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeDrawer()});
+function lines(){return Object.entries(cart).map(([k,q])=>{const i=itemInfo(k);return`
+ <div class="line-item" style="--li:${i.tint}"><div class="sw">${bottle(i.color,i.label)}</div>
+  <div><b>${i.name}</b><small>${i.sub}</small><br><button class="rm" data-rmk="${encodeURIComponent(k)}">Remove</button></div>
+  <div style="text-align:right"><div class="stepper" style="transform:scale(.85);transform-origin:right"><button data-dk="${encodeURIComponent(k)}" aria-label="Fewer">−</button><output>${q}</output><button data-ik="${encodeURIComponent(k)}" aria-label="More">+</button></div><b style="font-variant-numeric:tabular-nums">${money(i.price*q)}</b></div>
+ </div>`}).join("")}
+function totalsHtml(){
+ const sub=subtotal(),fee=method==="delivery"&&sub<FREE?DELIV:0;
+ return`<div class="totals"><div><span>Subtotal</span><span>${money(sub)}</span></div>
+  <div><span>${method==="delivery"?"Local delivery":"Pickup in Methuen"}</span><span>${fee?money(fee):"Free"}</span></div>
+  <div class="grand"><span>Total</span><span>${money(sub+fee)}</span></div></div>`;
+}
+function nextDates(){const out=[];const d=new Date();for(let i=1;out.length<6&&i<21;i++){const x=new Date(d);x.setDate(d.getDate()+i);const w=x.getDay();if(w>=2&&w<=4)out.push(x.toLocaleDateString("en-US",{weekday:"long",month:"short",day:"numeric"}))}return out}
+function renderCart(){
+ $("#cartCount").textContent=countAll();
+ const body=$("#drawerBody");
+ if(view==="done")return;
+ if(!countAll()){$("#drawerTitle").textContent="Your order";body.innerHTML=`<div class="empty"><div style="width:60px;margin:0 auto">${bottle("#E9A520","Ginger Fire")}</div><p style="margin-top:14px">Nothing in here yet.</p><a class="btn orange small" href="#shop" style="margin-top:14px" onclick="closeDrawer()">Browse shots</a></div>`;return}
+ if(view==="cart"){
+  const sub=subtotal(),pct=Math.min(100,sub/FREE*100);
+  $("#drawerTitle").textContent="Your order";
+  body.innerHTML=lines()+`<div class="progress">${sub>=FREE?"You've unlocked free local delivery!":`${money(FREE-sub)} away from free local delivery`}<div class="bar"><i style="width:${pct}%"></i></div></div>`+totalsHtml()+`<button class="btn orange" id="toCheckout" style="justify-content:center;margin-top:8px">Continue to checkout <span class="arr">→</span></button>`;
+ } else {
+  $("#drawerTitle").textContent="Checkout";
+  body.innerHTML=`<form id="orderForm" novalidate>
+   <div class="seg"><input type="radio" name="m" id="m-p" value="pickup" ${method==="pickup"?"checked":""}><label for="m-p">Pickup<br><small>Methuen · Free</small></label>
+   <input type="radio" name="m" id="m-d" value="delivery" ${method==="delivery"?"checked":""}><label for="m-d">Delivery<br><small>$5 · free $40+</small></label></div>
+   <label for="f-name">Full name<input id="f-name" required autocomplete="name"></label>
+   <label for="f-phone">Mobile number<input id="f-phone" required type="tel" autocomplete="tel" placeholder="Mel texts to confirm"></label>
+   <label for="f-email">Email<input id="f-email" type="email" autocomplete="email"></label>
+   ${method==="delivery"?`<label for="f-addr">Delivery address<input id="f-addr" required autocomplete="street-address"></label>
+   <label for="f-town">Town<select id="f-town">${["Methuen","Lawrence","Andover","North Andover","Haverhill","Dracut","Salem, NH","Pelham, NH"].map(t=>`<option>${t}</option>`).join("")}</select></label>`:""}
+   <label for="f-date">${method==="delivery"?"Delivery":"Pickup"} day<select id="f-date">${nextDates().map(x=>`<option>${x}</option>`).join("")}</select></label>
+   <label for="f-pay">Payment<select id="f-pay"><option>Pay at pickup / delivery (cash or card)</option><option>Venmo</option><option>Zelle</option></select></label>
+   <label for="f-notes">Notes for Mel<textarea id="f-notes" rows="2" placeholder="Allergies, repeat weekly, gift note..."></textarea></label>
+   ${totalsHtml()}
+   <p class="err" id="err" hidden></p>
+   <button class="btn orange" type="submit" style="justify-content:center">Place order</button>
+   <button class="rm" type="button" id="back" style="justify-self:center">Back to cart</button>
+  </form>`;
+ }
+}
+$("#drawerBody").addEventListener("click",e=>{
+ const t=e.target.closest("button");if(!t)return;
+ if(t.dataset.rmk){delete cart[decodeURIComponent(t.dataset.rmk)];save();renderCart()}
+ if(t.dataset.ik)add(decodeURIComponent(t.dataset.ik),1);
+ if(t.dataset.dk)add(decodeURIComponent(t.dataset.dk),-1);
+ if(t.id==="toCheckout"){view="checkout";renderCart()}
+ if(t.id==="back"){view="cart";renderCart()}
+});
+$("#drawerBody").addEventListener("change",e=>{if(e.target.name==="m"){method=e.target.value;renderCart()}});
+$("#drawerBody").addEventListener("submit",e=>{
+ e.preventDefault();
+ const name=$("#f-name").value.trim(),phone=$("#f-phone").value.trim(),addr=$("#f-addr"),err=$("#err");
+ if(!name||phone.replace(/\D/g,"").length<10||(addr&&!addr.value.trim())){err.hidden=false;err.textContent="Add your name, a 10-digit mobile number"+(addr?" and a delivery address":"")+" so Mel can confirm your order.";return}
+ const total=subtotal()+(method==="delivery"&&subtotal()<FREE?DELIV:0);
+ const num="MEL-"+Math.floor(1000+Math.random()*9000),when=$("#f-date").value;
+ view="done";$("#drawerTitle").textContent="Order received";
+ $("#drawerBody").innerHTML=`<div class="done">${bottle("#FF5A1F","Thank You")}<p class="big">Thank you, ${name.split(" ")[0]}!</p>
+  <p>Order <b>${num}</b> · ${money(total)}<br>${method==="delivery"?"Delivery":"Pickup"} on ${when}</p>
+  <p>Mel will text <b>${phone}</b> to confirm${method==="pickup"?" and send the pickup address":""}.</p>
+  <p class="note">Demo checkout: orders will go to Mel once the shop is connected to Square or WooCommerce.</p>
+  <button class="btn small" id="again" style="margin-top:16px">Keep browsing</button></div>`;
+ cart={};save();$("#cartCount").textContent=0;
+ $("#again").onclick=()=>{view="cart";closeDrawer()};
+});
+renderCart();
+</script>
+<script>
+(function(){
+ if(!window.THREE)return;
+ const canvas=document.getElementById("gl");
+ let renderer;
+ try{renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});}catch(e){return}
+ if(!renderer.getContext())return;
+ document.documentElement.classList.add("gl");
+ renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+ renderer.outputEncoding=THREE.sRGBEncoding;
+ renderer.toneMapping=THREE.LinearToneMapping;renderer.toneMappingExposure=1.18;
+ renderer.autoClear=false;renderer.setClearColor(0x000000,0);
+
+ const scene=new THREE.Scene();
+ // studio environment for glass reflections
+ const env=new THREE.Scene();env.background=new THREE.Color(0xdfe6e1);
+ const panel=(w,h,rgb,pos)=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({color:new THREE.Color(...rgb),side:THREE.DoubleSide}));m.position.set(...pos);m.lookAt(0,0,0);env.add(m)};
+ panel(8,3,[6,6,6],[0,5,2]);panel(2.5,7,[4,3.4,2.6],[5,1,2.5]);panel(2.5,7,[1.8,2.4,3],[-5,1,1.5]);panel(7,2,[1.6,1.6,1.6],[0,0,-5]);
+ const pm=new THREE.PMREMGenerator(renderer);scene.environment=pm.fromScene(env,0.03).texture;
+ scene.add(new THREE.HemisphereLight(0xffffff,0xd9e6dc,0.85));
+ const key=new THREE.DirectionalLight(0xffffff,1.5);key.position.set(2.5,4,5);scene.add(key);
+ const rim=new THREE.DirectionalLight(0xfff1e0,0.8);rim.position.set(-3,2.5,-4);scene.add(rim);
+
+ const V=(a)=>a.map(([x,y])=>new THREE.Vector2(x,y));
+ const pivot=new THREE.Group();scene.add(pivot);
+ const g=new THREE.Group();g.position.y=-1.12;pivot.add(g);
+ const glass=new THREE.Mesh(new THREE.LatheGeometry(V([[0.001,0],[0.44,0],[0.5,0.06],[0.5,1.5],[0.47,1.68],[0.32,1.86],[0.22,1.98],[0.21,2.1],[0.235,2.12],[0.235,2.16],[0.21,2.18]]),72),
+  new THREE.MeshPhysicalMaterial({color:0xffffff,roughness:0.04,metalness:0,transparent:true,opacity:0.2,clearcoat:1,clearcoatRoughness:0.03,envMapIntensity:1.8,side:THREE.DoubleSide,depthWrite:false}));
+ glass.renderOrder=2;
+ const liquidMat=new THREE.MeshPhysicalMaterial({color:0xff8800,roughness:0.18,clearcoat:0.7,clearcoatRoughness:0.1,emissive:0xff8800,emissiveIntensity:0.25});
+ const liquid=new THREE.Mesh(new THREE.LatheGeometry(V([[0.001,0.05],[0.45,0.05],[0.475,0.1],[0.475,1.44],[0.3,1.44],[0.001,1.44]]),72),liquidMat);
+ const cap=new THREE.Mesh(new THREE.CylinderGeometry(0.255,0.255,0.32,48),new THREE.MeshStandardMaterial({color:0x23402f,roughness:0.38,metalness:0.15}));cap.position.y=2.3;
+ const capTop=new THREE.Mesh(new THREE.CylinderGeometry(0.24,0.255,0.03,48),new THREE.MeshStandardMaterial({color:0xFF6A1F,roughness:0.4}));capTop.position.y=2.475;
+ const blank=document.createElement("canvas");blank.width=blank.height=4;
+ const labelMat=new THREE.MeshStandardMaterial({map:new THREE.CanvasTexture(blank),roughness:0.55});
+ const label=new THREE.Mesh(new THREE.CylinderGeometry(0.508,0.508,0.98,96,1,true,-Math.PI*0.62,Math.PI*1.24),labelMat);label.position.y=0.78;
+ g.add(liquid,label,cap,capTop,glass);
+ // soft contact shadow
+ const sc=document.createElement("canvas");sc.width=sc.height=128;const sx=sc.getContext("2d");
+ const gr=sx.createRadialGradient(64,64,4,64,64,62);gr.addColorStop(0,"rgba(0,0,0,.55)");gr.addColorStop(1,"rgba(0,0,0,0)");sx.fillStyle=gr;sx.fillRect(0,0,128,128);
+ const shadow=new THREE.Mesh(new THREE.PlaneGeometry(1.7,1.7),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(sc),transparent:true,depthWrite:false}));
+ shadow.rotation.x=-Math.PI/2;shadow.position.y=-1.125;shadow.renderOrder=-1;scene.add(shadow);
+
+ const camera=new THREE.PerspectiveCamera(28,1,0.1,50);
+ const tanh=Math.tan(THREE.MathUtils.degToRad(14));
+
+ const tex={};
+ function fitFont(x,txt,weight,size,fam,max){let f=size;x.font=`${weight} ${f}px ${fam}`;while(x.measureText(txt).width>max&&f>12){f-=2;x.font=`${weight} ${f}px ${fam}`}return f}
+ function labelTex(id){
+  if(tex[id])return tex[id];
+  const s=byId[id];const cv=document.createElement("canvas");cv.width=1024;cv.height=512;const x=cv.getContext("2d");
+  x.fillStyle="#FFFDF7";x.fillRect(0,0,1024,512);
+  x.fillStyle=s.c;x.fillRect(0,0,1024,12);x.fillRect(0,500,1024,12);
+  x.save();x.translate(462,34);x.scale(100/48,100/48);
+  x.fillStyle="#FF6A1F";x.beginPath();x.arc(24,24,23,0,Math.PI*2);x.fill();
+  x.fillStyle="#FFFDF7";x.fill(new Path2D("M24 10c0 0-9 11-9 17.5a9 9 0 0 0 18 0C33 21 24 10 24 10z"));
+  x.fillStyle="#F2B233";x.fill(new Path2D("M24 17c0 0-5 6.5-5 10.2a5 5 0 0 0 10 0C29 23.5 24 17 24 17z"));
+  x.fillStyle="#2F7D4A";x.fill(new Path2D("M25 11c3-5 9-6 12-5-1 5-6 8-12 5z"));
+  x.restore();
+  x.textAlign="center";
+  x.fillStyle="#173326";x.font='600 112px Caveat, cursive';x.fillText("Mel",512,226);
+  x.fillStyle="#4F6656";x.font='700 24px Figtree, Arial, sans-serif';
+  try{x.letterSpacing="7px"}catch(e){}x.fillText("ORGANIC SHOTS",516,264);try{x.letterSpacing="0px"}catch(e){}
+  x.fillStyle=s.c;x.beginPath();if(x.roundRect){x.roundRect(212,288,600,96,18);x.fill()}else x.fillRect(212,288,600,96);
+  const name=s.name.toUpperCase();const f=fitFont(x,name,800,60,'"Bricolage Grotesque", Arial, sans-serif',550);
+  x.fillStyle="#FFFFFF";x.fillText(name,512,336+f*0.36);
+  x.fillStyle="#4F6656";x.font='600 22px Figtree, Arial, sans-serif';x.fillText("2 FL OZ  ·  COLD-PRESSED  ·  ORGANIC  ·  METHUEN, MA",512,428);
+  fitFont(x,s.ingr.toUpperCase(),500,19,'Figtree, Arial, sans-serif',880);x.fillText(s.ingr.toUpperCase(),512,466);
+  const t=new THREE.CanvasTexture(cv);t.encoding=THREE.sRGBEncoding;t.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
+  tex[id]=t;return t;
+ }
+
+ const states=new WeakMap();
+ let mx=0,my=0;addEventListener("pointermove",ev=>{mx=ev.clientX/innerWidth-.5;my=ev.clientY/innerHeight-.5},{passive:true});
+ window.kickBottle=el=>{const v=states.get(el);if(v){v.vel=0.55;if(v.wasH)v.tg+=Math.PI*2}};
+ function state(el){
+  let v=states.get(el);
+  if(!v){
+   v={rot:(Math.random()-.5)*1.4,vel:0,drag:false,phase:Math.random()*6.28,hov:0};states.set(el,v);
+   let lx=0;
+   el.addEventListener("pointerdown",e=>{v.drag=true;lx=e.clientX;v.vel=0;try{el.setPointerCapture(e.pointerId)}catch(_){}});
+   el.addEventListener("pointermove",e=>{if(!v.drag)return;const d=(e.clientX-lx)*0.013;lx=e.clientX;v.rot+=d;v.vel=d});
+   const up=()=>{v.drag=false};el.addEventListener("pointerup",up);el.addEventListener("pointercancel",up);el.addEventListener("lostpointercapture",up);
+  }
+  return v;
+ }
+
+ const header=document.querySelector("header");
+ const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+ let last=performance.now(),W=0,H=0;
+ function frame(now){
+  requestAnimationFrame(frame);
+  const dt=Math.min(0.05,(now-last)/1000);last=now;const t=now/1000;
+  const cw=canvas.clientWidth,ch=canvas.clientHeight;
+  if(cw!==W||ch!==H){W=cw;H=ch;renderer.setSize(W,H,false)}
+  renderer.setScissorTest(false);renderer.clear();renderer.setScissorTest(true);
+  const topEdge=Math.max(0,header.getBoundingClientRect().bottom);
+  document.querySelectorAll(".b3d").forEach(el=>{
+   const s=byId[el.dataset.b];if(!s||!el.offsetParent)return;
+   const rc=el.getBoundingClientRect();
+   if(rc.width<4||rc.bottom<=topEdge||rc.top>=H||rc.right<=0||rc.left>=W)return;
+   const v=state(el);
+   const host=el.closest(".card,.bundle,.panel,.hero-stage,.slot,.cta-row")||el;
+   const hovered=host.matches(":hover");
+   v.hov+=((hovered||v.drag?1:0)-v.hov)*Math.min(1,dt*6);
+   if(!v.drag){
+    if(hovered){if(!v.wasH){v.tg=Math.round(v.rot/(Math.PI*2))*Math.PI*2+Math.PI*2;v.wasH=true}v.rot+=(v.tg-v.rot)*Math.min(1,dt*3.2);v.vel*=0.8}
+    else{v.wasH=false;v.vel*=0.94;v.rot+=v.vel+(reduce?0:dt*0.5)}
+   }
+   pivot.rotation.set(-0.05*v.hov,v.rot,reduce?0:Math.sin(t*1.1+v.phase)*0.045*(1-v.hov));
+   pivot.position.y=reduce?0:Math.sin(t*1.5+v.phase)*0.06+v.hov*0.04;
+   if(el.dataset.hero){pivot.rotation.x+=my*0.3;pivot.rotation.z-=mx*0.18}
+   pivot.scale.setScalar(1+v.hov*0.07);
+   shadow.scale.setScalar(1-pivot.position.y*0.8);shadow.material.opacity=0.8-pivot.position.y*2;
+   liquidMat.color.set(s.c);liquidMat.emissive.set(s.c);labelMat.map=labelTex(el.dataset.b);
+   const aspect=rc.width/rc.height,fill=el.dataset.hero?0.95:(el.closest(".mini-row,.cta-row,.slot")?0.97:0.86);
+   const dist=Math.max(1.3/tanh/fill,0.56/(tanh*aspect)/fill)+0.5;
+   camera.aspect=aspect;camera.position.set(0,0.42,dist);camera.lookAt(0,0.02,0);camera.updateProjectionMatrix();
+   const vy=H-rc.bottom,visTop=Math.max(rc.top,topEdge);
+   renderer.setViewport(rc.left,vy,rc.width,rc.height);
+   renderer.setScissor(rc.left,vy,rc.width,rc.bottom-visTop);
+   renderer.clear(false,true,false);
+   renderer.render(scene,camera);
+  });
+ }
+ const go=()=>requestAnimationFrame(frame);
+ const fontsReady=document.fonts&&document.fonts.load?Promise.all([document.fonts.load('600 112px Caveat'),document.fonts.load('800 60px "Bricolage Grotesque"'),document.fonts.load('700 24px Figtree')]):Promise.resolve();
+ Promise.race([fontsReady,new Promise(r=>setTimeout(r,2000))]).then(go,go);
+})();
+</script>
+
+</body>
+</html>
