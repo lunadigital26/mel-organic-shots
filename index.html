@@ -347,6 +347,21 @@ footer{background:var(--deep);color:#fff;padding-block:56px}
 .crate .slot .b3d{width:100%}
 .crate .slot:empty{display:none}
 
+
+.crate .slot .x-rm{position:absolute;inset:auto;top:-14px;right:-16px;width:24px;height:24px;border-radius:50%;background:#fff;border:2px solid #14261C;color:#14261C;font:800 13px/1 "Figtree",sans-serif;display:grid;place-items:center;cursor:pointer;z-index:3;box-shadow:0 4px 10px -4px rgba(0,0,0,.4);transition:transform .2s,background .2s}
+.crate .slot .x-rm:hover{background:#FF5A1F;border-color:#FF5A1F;color:#fff;transform:scale(1.15) rotate(90deg)}
+.byo-clear{border:0;background:none;color:#4D5F53;font:700 .85rem "Figtree",sans-serif;text-decoration:underline;cursor:pointer;padding:0}
+.byo-clear[hidden]{display:none}
+@media (max-width:600px){.crate .slot .x-rm{width:20px;height:20px;font-size:11px;top:-12px;right:-12px}}
+
+
+.bundles{background:#123D27!important;color:#fff}
+.bundles>.wrap>.head h2{color:#fff}
+.bundles>.wrap>.head p{color:rgba(255,255,255,.8)}
+.bundles>.wrap>.head .eyebrow{color:#9BE5A9}
+.bundles .bundle.hot{outline-color:#FFD23F}
+.bundles .byo,.bundles .bundle{color:#14261C}
+
 /* 3D */
 .b3d{position:relative;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
 .b3d:active{cursor:grabbing}
@@ -464,8 +479,8 @@ input:focus,select:focus,textarea:focus{border-color:var(--ink);outline:none}
   </section>
 
   <div class="waves" aria-hidden="true" style="background:var(--bt,#FFF0C9)" id="benWave">
-    <svg class="back" viewBox="0 0 2880 100" preserveAspectRatio="none"><path fill="#DDF3E4" d="M0 50 C240 95 480 5 720 50 S1200 95 1440 50 S1920 5 2160 50 S2640 95 2880 50 V100 H0Z"/></svg>
-    <svg viewBox="0 0 2880 100" preserveAspectRatio="none"><path fill="#DDF3E4" d="M0 60 C360 20 720 100 1080 60 S1440 30 1440 60 S1800 20 2160 60 S2520 100 2880 60 V100 H0Z"/></svg>
+    <svg class="back" viewBox="0 0 2880 100" preserveAspectRatio="none"><path fill="#123D27" d="M0 50 C240 95 480 5 720 50 S1200 95 1440 50 S1920 5 2160 50 S2640 95 2880 50 V100 H0Z"/></svg>
+    <svg viewBox="0 0 2880 100" preserveAspectRatio="none"><path fill="#123D27" d="M0 60 C360 20 720 100 1080 60 S1440 30 1440 60 S1800 20 2160 60 S2520 100 2880 60 V100 H0Z"/></svg>
   </div>
   <section class="bundles" id="bundles" style="padding-top:40px">
     <div class="wrap">
@@ -485,12 +500,13 @@ input:focus,select:focus,textarea:focus{border-color:var(--ink);outline:none}
             <div style="display:flex;gap:12px;align-items:center"><span class="price" id="byoPrice"></span><button class="btn orange small" id="byoAdd">Add box</button></div>
           </div>
           <p class="note" id="byoNote"></p>
+          <button class="byo-clear" id="byoClear" hidden>Clear crate</button>
         </div>
       </div>
     </div>
   </section>
   <div class="waves flip" aria-hidden="true" style="background:var(--coral)">
-    <svg viewBox="0 0 2880 100" preserveAspectRatio="none"><path fill="#DDF3E4" d="M0 60 C360 20 720 100 1080 60 S1440 30 1440 60 S1800 20 2160 60 S2520 100 2880 60 V100 H0Z"/></svg>
+    <svg viewBox="0 0 2880 100" preserveAspectRatio="none"><path fill="#123D27" d="M0 60 C360 20 720 100 1080 60 S1440 30 1440 60 S1800 20 2160 60 S2520 100 2880 60 V100 H0Z"/></svg>
   </div>
 
   <section class="mel" id="mel">
@@ -806,16 +822,17 @@ $("#bundleGrid").addEventListener("click",e=>{const t=e.target.closest("[data-bu
 let boxSize=12,box=[],lastDrop=-1;
 function renderByo(){
  $("#sizes").innerHTML=[6,12].map(n=>`<button class="chip" data-size="${n}" aria-pressed="${n===boxSize}">${n} shots</button>`).join("");
- $("#crate").innerHTML=Array.from({length:boxSize},(_,i)=>{const s=box[i]&&byId[box[i]];return`<div class="slot" style="--sx:${[15.6,29.6,43.9,56.2,69.6,84.4][i%6]}%;--sy:${i<6?54.6:29.4}%">${s?(i===lastDrop?b3(box[i]):b3(box[i]).replace('class="b3d"','class="b3d" style="animation:none"'))+`<button data-rm="${i}" aria-label="Remove ${s.name}"></button>`:""}</div>`}).join("");
+ $("#crate").innerHTML=Array.from({length:boxSize},(_,i)=>{const s=box[i]&&byId[box[i]];return`<div class="slot" style="--sx:${[15.6,29.6,43.9,56.2,69.6,84.4][i%6]}%;--sy:${i<6?54.6:29.4}%">${s?(i===lastDrop?b3(box[i]):b3(box[i]).replace('class="b3d"','class="b3d" style="animation:none"'))+`<button data-rm="${i}" aria-label="Remove ${s.name}"></button><button class="x-rm" data-rm="${i}" aria-label="Remove ${s.name}" title="Remove">✕</button>`:""}</div>`}).join("");
  $("#byoPrice").textContent=money(boxPrice(boxSize));
  const left=boxSize-box.length;
  $("#byoNote").textContent=left?`${left} spot${left>1?"s":""} left. Fill the crate to add it.`:`Full! ${summarize(box)}`;
- $("#byoAdd").disabled=!!left;$("#byoAdd").style.opacity=left?.45:1;
+ $("#byoClear").hidden=!box.length;$("#byoAdd").disabled=!!left;$("#byoAdd").style.opacity=left?.45:1;
 }
 $("#byoPicks").innerHTML=SHOTS.map(s=>`<button class="pick" data-pick="${s.id}" style="--pc:${s.c};--pt:${s.tint}"><i></i>${s.name}</button>`).join("");
 $("#byoPicks").addEventListener("click",e=>{const t=e.target.closest("[data-pick]");if(!t)return;if(box.length<boxSize){box.push(t.dataset.pick);lastDrop=box.length-1;renderByo()}else toast("Crate is full")});
 $("#crate").addEventListener("click",e=>{const t=e.target.closest("[data-rm]");if(!t)return;box.splice(+t.dataset.rm,1);lastDrop=-1;renderByo()});
 $("#sizes").addEventListener("click",e=>{const t=e.target.closest("[data-size]");if(!t)return;boxSize=+t.dataset.size;box=box.slice(0,boxSize);lastDrop=-1;renderByo()});
+$("#byoClear").addEventListener("click",()=>{box=[];lastDrop=-1;renderByo();toast("Crate cleared")});
 $("#byoAdd").addEventListener("click",()=>{if(box.length<boxSize)return;add("box:"+encodeURIComponent(JSON.stringify({items:[...box].sort(),n:++customBoxes})),1,$("#crate"));toast("Custom box added");box=[];lastDrop=-1;renderByo()});
 renderByo();
 
@@ -956,7 +973,7 @@ renderCart();
  document.documentElement.classList.add("gl");
  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
  renderer.outputEncoding=THREE.sRGBEncoding;
- renderer.toneMapping=THREE.LinearToneMapping;renderer.toneMappingExposure=1.18;
+ renderer.toneMapping=THREE.LinearToneMapping;renderer.toneMappingExposure=0.95;
  renderer.autoClear=false;renderer.setClearColor(0x000000,0);
 
  const scene=new THREE.Scene();
@@ -965,7 +982,7 @@ renderCart();
  const panel=(w,h,rgb,pos)=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({color:new THREE.Color(...rgb),side:THREE.DoubleSide}));m.position.set(...pos);m.lookAt(0,0,0);env.add(m)};
  panel(8,3,[6,6,6],[0,5,2]);panel(2.5,7,[4,3.4,2.6],[5,1,2.5]);panel(2.5,7,[1.8,2.4,3],[-5,1,1.5]);panel(7,2,[1.6,1.6,1.6],[0,0,-5]);
  const pm=new THREE.PMREMGenerator(renderer);scene.environment=pm.fromScene(env,0.03).texture;
- scene.add(new THREE.HemisphereLight(0xffffff,0xd9e6dc,0.85));
+ scene.add(new THREE.HemisphereLight(0xffffff,0xd9e6dc,0.5));
  const key=new THREE.DirectionalLight(0xffffff,1.5);key.position.set(2.5,4,5);scene.add(key);
  const rim=new THREE.DirectionalLight(0xfff1e0,0.8);rim.position.set(-3,2.5,-4);scene.add(rim);
 
@@ -973,14 +990,14 @@ renderCart();
  const pivot=new THREE.Group();scene.add(pivot);
  const g=new THREE.Group();g.position.y=-1.12;pivot.add(g);
  const glass=new THREE.Mesh(new THREE.LatheGeometry(V([[0.001,0],[0.44,0],[0.5,0.06],[0.5,1.5],[0.47,1.68],[0.32,1.86],[0.22,1.98],[0.21,2.1],[0.235,2.12],[0.235,2.16],[0.21,2.18]]),72),
-  new THREE.MeshPhysicalMaterial({color:0xffffff,roughness:0.04,metalness:0,transparent:true,opacity:0.2,clearcoat:1,clearcoatRoughness:0.03,envMapIntensity:1.8,side:THREE.DoubleSide,depthWrite:false}));
+  new THREE.MeshPhysicalMaterial({color:0xffffff,roughness:0.04,metalness:0,transparent:true,opacity:0.14,clearcoat:1,clearcoatRoughness:0.03,envMapIntensity:0.9,side:THREE.DoubleSide,depthWrite:false}));
  glass.renderOrder=2;
- const liquidMat=new THREE.MeshPhysicalMaterial({color:0xff8800,roughness:0.18,clearcoat:0.7,clearcoatRoughness:0.1,emissive:0xff8800,emissiveIntensity:0.25});
+ const liquidMat=new THREE.MeshPhysicalMaterial({color:0xff8800,roughness:0.18,clearcoat:0.7,clearcoatRoughness:0.1,emissive:0xff8800,emissiveIntensity:0.1});
  const liquid=new THREE.Mesh(new THREE.LatheGeometry(V([[0.001,0.05],[0.45,0.05],[0.475,0.1],[0.475,1.44],[0.3,1.44],[0.001,1.44]]),72),liquidMat);
  const cap=new THREE.Mesh(new THREE.CylinderGeometry(0.255,0.255,0.32,48),new THREE.MeshStandardMaterial({color:0x23402f,roughness:0.38,metalness:0.15}));cap.position.y=2.3;
  const capTop=new THREE.Mesh(new THREE.CylinderGeometry(0.24,0.255,0.03,48),new THREE.MeshStandardMaterial({color:0xFF6A1F,roughness:0.4}));capTop.position.y=2.475;
  const blank=document.createElement("canvas");blank.width=blank.height=4;
- const labelMat=new THREE.MeshStandardMaterial({map:new THREE.CanvasTexture(blank),roughness:0.55});
+ const labelMat=new THREE.MeshStandardMaterial({map:new THREE.CanvasTexture(blank),roughness:0.85,metalness:0,envMapIntensity:0.25});
  const label=new THREE.Mesh(new THREE.CylinderGeometry(0.508,0.508,0.98,96,1,true,-Math.PI*0.62,Math.PI*1.24),labelMat);label.position.y=0.78;
  g.add(liquid,label,cap,capTop,glass);
  // soft contact shadow
