@@ -423,6 +423,38 @@ footer{background:var(--deep);color:#fff;padding-block:56px}
 
 #shop .chip:not([aria-pressed="true"]),.towns span{background:#FBFCF9}
 .faq details{border-bottom-color:rgba(20,38,28,.35)}
+
+/* compact shot menu */
+#products.grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+#products .card{border-radius:24px}
+#products .card-art{height:230px}
+#products .card-body{padding:2px 18px 18px;gap:8px}
+#products .card-body h3{font-size:1.35rem}
+#products .tagline{font-size:1.2rem}
+#products .ingr{font-size:.85rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#products .price{font-size:1.25rem}
+#products .stepper{display:none}
+@media (max-width:1100px){#products.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:760px){
+ #products.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+ #products .card{border-radius:20px}
+ #products .card:hover{transform:none}
+ #products .card-art{height:165px}
+ #products .card-art .b3d{inset:10px 0 2px}
+ #products .tag{font-size:.62rem;left:8px;top:8px;padding:.25em .6em}
+ #products .qv-btn{font-size:.62rem;right:8px;top:8px;padding:.25em .6em}
+ #products .card-body{padding:0 12px 12px;gap:4px}
+ #products .card-body h3{font-size:1.02rem;letter-spacing:-.01em}
+ #products .tagline{font-size:1rem}
+ #products .ingr,#products .perks{display:none}
+ #products .qv-btn{display:none}
+ #products .tagline{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ #products .buy{padding-top:6px;gap:6px}
+ #products .price{font-size:1.05rem}
+ #products .price small{display:none}
+ #products .btn.small{padding:.5em .85em;font-size:.8rem}
+}
+
 /* 3D */
 .b3d{position:relative;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
 .b3d:active{cursor:grabbing}
@@ -520,7 +552,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--ink);outline:none}
   <section id="shop">
     <div class="wrap">
       <div class="head reveal">
-        <div><p class="eyebrow" style="color:var(--leaf)">The shot menu</p><h2>Pick your little ritual.</h2><p>One 2 oz glass bottle, one daily dose. Hover a shot to pour it, drag the bottle to spin it.</p></div>
+        <div><p class="eyebrow" style="color:var(--leaf)">The shot menu</p><h2>Pick your little ritual.</h2><p>One 2 oz glass bottle, one daily dose. Tap any bottle to see what&#39;s inside, or drag it to turn it.</p></div>
         <div class="filters" role="group" aria-label="Filter shots by goal" id="filters"></div>
       </div>
       <div class="grid" id="products"></div>
