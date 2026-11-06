@@ -284,6 +284,29 @@ footer{background:var(--deep);color:#fff;padding-block:56px}
 @keyframes bobble{50%{transform:translateY(-8px) rotate(4deg)}}
 @media (max-width:760px){.ben-stage{min-height:330px}.ingr-pop{--sz:62px!important}}
 
+
+.scene{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.scene svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.scene .sc{animation:sceneIn 1s ease both}
+@keyframes sceneIn{from{opacity:0;transform:scale(1.04)}}
+.scene [data-d]{transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+.scene .flow{animation:flow 16s linear infinite}
+.scene .flow.slow{animation-duration:26s}
+.scene .bird{animation:fly 18s linear infinite}
+@keyframes fly{from{transform:translateX(-200px)}to{transform:translateX(1700px)}}
+.scene .ray{animation:ray 6s ease-in-out infinite alternate}
+@keyframes ray{to{opacity:.05}}
+.scene .sway{transform-box:fill-box;transform-origin:50% 0;animation:sway 5s ease-in-out infinite alternate}
+.scene .sway2{transform-box:fill-box;transform-origin:50% 100%;animation:sway 6s ease-in-out infinite alternate}
+@keyframes sway{from{transform:rotate(-3deg)}to{transform:rotate(3deg)}}
+.hero .giant span{opacity:.16}
+.hero-copy{position:relative}
+.hero-copy::before{content:"";position:absolute;inset:-40px -60px -40px -80px;background:radial-gradient(ellipse at 40% 45%,rgba(255,255,255,.72),rgba(255,255,255,0) 68%);z-index:-1;pointer-events:none}
+.qv-scene{position:absolute;inset:0;z-index:0}
+.qv-scene svg{width:100%;height:100%;display:block}
+.qv-art.photo .qv-scene{display:none}
+.qv-art .qv-stage{z-index:1}
+
 /* 3D */
 .b3d{position:relative;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
 .b3d:active{cursor:grabbing}
@@ -349,9 +372,10 @@ input:focus,select:focus,textarea:focus{border-color:var(--ink);outline:none}
 
 <main id="top">
   <section class="hero" id="hero">
+    <div class="scene" id="scene" aria-hidden="true"></div>
     <div class="giant" aria-hidden="true"><div class="track" id="giant"></div></div>
     <div class="wrap hero-grid">
-      <div>
+      <div class="hero-copy">
         <p class="script" style="color:var(--accent)">hand-pressed by Mel in Methuen</p>
         <h1>Tiny shots.<br><span class="wob">Big</span> glow.</h1>
         <p class="lede">15 organic, cold-pressed juice shots made in small batches every week. Real roots, real fruit, nothing else.</p>
@@ -627,11 +651,51 @@ function fly(fromEl,color){
 let toastT;function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),1800)}
 
 /* hero flavor switcher */
+const SCENE_OF={ginger:"m",turmeric:"m",carrot:"m",firecider:"m",blue:"o",pineapple:"o",seamoss:"o",citrus:"o",aloe:"o",green:"f",elder:"f",beet:"f",cranberry:"f",garlic:"f",acv:"f"};
+function sceneSvg(id,small){
+ const s=byId[id],t=SCENE_OF[id]||"f",u="g"+Math.random().toString(36).slice(2,7);
+ const sky=`<defs><linearGradient id="${u}s" x1="0" y1="0" x2="0" y2="1">`;
+ if(t==="m")return `<svg viewBox="0 0 1440 800" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><g class="sc">${sky}<stop offset="0" stop-color="${s.tint}"/><stop offset="1" stop-color="#FFF7EC"/></linearGradient></defs>
+  <rect width="1440" height="800" fill="url(#${u}s)"/>
+  <g data-d="6"><circle cx="1090" cy="250" r="120" fill="#FFD38A" opacity=".55"/><circle cx="1090" cy="250" r="84" fill="#FFC15E"/></g>
+  ${small?"":`<g class="bird" fill="none" stroke="#7A5A3A" stroke-width="3" stroke-linecap="round"><path d="M0 170q12-12 24 0q12-12 24 0"/><path d="M60 200q9-9 18 0q9-9 18 0"/></g>`}
+  <g data-d="10"><path d="M0 520L170 380L300 460L520 280L700 440L880 320L1060 450L1250 340L1440 430V800H0Z" fill="#EDC49A"/><path d="M520 280L470 330L505 322L540 345L575 318L610 335Z M1250 340L1210 380L1240 372L1270 392Z" fill="#FFF7EC"/></g>
+  <g data-d="18"><path d="M0 600L210 470L390 560L610 410L820 560L1010 460L1210 575L1440 470V800H0Z" fill="#CF9566"/></g>
+  <g data-d="28"><path d="M0 690Q240 610 480 665T960 655T1440 640V800H0Z" fill="#7FA866"/><path d="M0 740Q360 690 720 730T1440 720V800H0Z" fill="#5E8A4A"/>
+   <g fill="#3F6B35">${[80,150,1290,1360,1220].map((x,i)=>`<path d="M${x} ${735-i%2*12}l22-60l22 60z"/>`).join("")}</g></g>
+ </g></svg>`;
+ if(t==="o")return `<svg viewBox="0 0 1440 800" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><g class="sc">${sky}<stop offset="0" stop-color="#BFE6F6"/><stop offset="1" stop-color="#F3FBFF"/></linearGradient><linearGradient id="${u}w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3FB1D8"/><stop offset="1" stop-color="#1C7FB5"/></linearGradient></defs>
+  <rect width="1440" height="800" fill="url(#${u}s)"/>
+  <g data-d="6"><circle cx="1040" cy="270" r="120" fill="#FFF1B8" opacity=".7"/><circle cx="1040" cy="270" r="80" fill="#FFE07A"/></g>
+  <g fill="#FFFFFF" opacity=".85" data-d="8"><ellipse cx="260" cy="190" rx="90" ry="26"/><ellipse cx="320" cy="172" rx="60" ry="28"/><ellipse cx="1260" cy="140" rx="80" ry="22"/></g>
+  <g data-d="12"><path d="M1080 560Q1180 470 1300 520Q1360 545 1400 560Z" fill="#4E8F5E"/>
+   <g class="sway2"><path d="M1235 540Q1240 470 1260 430" stroke="#5B3F2A" stroke-width="9" fill="none"/><g fill="#2F7D4A"><path d="M1260 430q-60-10-90 30q50-20 90-30z"/><path d="M1260 430q60-12 92 22q-52-14-92-22z"/><path d="M1260 430q-20-50 10-80q-2 50-10 80z"/><path d="M1260 430q40-40 80-36q-46 14-80 36z"/></g></g></g>
+  <rect y="560" width="1440" height="240" fill="url(#${u}w)"/>
+  <g class="flow slow" opacity=".5"><path d="M0 585 C240 565 480 605 720 585 S1200 565 1440 585 S1920 605 2160 585 S2640 565 2880 585 V800 H0Z" fill="#6CC7E6"/></g>
+  <g class="flow"><path d="M0 640 C240 615 480 665 720 640 S1200 615 1440 640 S1920 665 2160 640 S2640 615 2880 640 V800 H0Z" fill="#2C8FC9"/><path d="M0 640 C240 615 480 665 720 640 S1200 615 1440 640 S1920 665 2160 640 S2640 615 2880 640" stroke="#FFFFFF" stroke-width="4" fill="none" opacity=".6"/></g>
+  <g data-d="26"><path d="M0 740Q720 690 1440 740V800H0Z" fill="#F4DDA9"/><path d="M0 752Q720 705 1440 752" stroke="#FFFFFF" stroke-width="5" fill="none" opacity=".7"/></g>
+ </g></svg>`;
+ return `<svg viewBox="0 0 1440 800" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><g class="sc">${sky}<stop offset="0" stop-color="#E4F4E7"/><stop offset="1" stop-color="${s.tint}"/></linearGradient></defs>
+  <rect width="1440" height="800" fill="url(#${u}s)"/>
+  <g class="ray" fill="#FFFFFF" opacity=".28"><path d="M760 0h90L620 800H460Z"/><path d="M980 0h60L860 800H760Z"/><path d="M560 0h50L330 800H250Z"/></g>
+  <g data-d="8" fill="#B9DDBF">${[0,1,2,3,4,5,6,7,8].map(i=>`<circle cx="${i*180+40}" cy="${470+(i%3)*24}" r="${130+(i%2)*30}"/>`).join("")}<rect y="500" width="1440" height="300"/></g>
+  <g data-d="16" fill="#7DBB86">${[0,1,2,3,4,5,6,7].map(i=>`<circle cx="${i*210+90}" cy="${590+(i%2)*30}" r="${120+(i%3)*20}"/>`).join("")}<rect y="620" width="1440" height="180"/></g>
+  <g data-d="28">
+   <g fill="#3F8A4F">${[0,1,2,3,4,5,6].map(i=>`<circle cx="${i*240+20}" cy="${720+(i%2)*20}" r="${110+(i%2)*20}"/>`).join("")}</g>
+   <g class="sway" fill="none" stroke="#2F6E3B" stroke-width="5"><path d="M120 0Q140 120 110 230"/><path d="M1330 0Q1300 150 1340 280"/></g>
+   <g fill="#2A6B38"><g class="sway"><ellipse cx="112" cy="250" rx="26" ry="48" transform="rotate(-20 112 250)"/></g><g class="sway"><ellipse cx="1340" cy="300" rx="28" ry="52" transform="rotate(18 1340 300)"/></g></g>
+   <g fill="#1F5A2E"><path d="M-40 800Q40 600 210 560Q120 680 150 800Z"/><path d="M1480 800Q1400 600 1230 560Q1320 680 1290 800Z"/></g>
+   <g fill="#4FA25E"><path d="M-20 800Q60 660 180 640Q110 720 120 800Z"/><path d="M1460 800Q1380 660 1260 640Q1330 720 1320 800Z"/></g>
+  </g>
+ </g></svg>`;
+}
+
 let heroIdx=0,heroTimer;
 $("#flavDots").innerHTML=FEATURED.map((id,i)=>`<button style="--dc:${byId[id].c}" data-h="${i}" aria-label="${byId[id].name}" aria-pressed="${i===0}"></button>`).join("");
 function setHero(i,kick){
  heroIdx=(i+FEATURED.length)%FEATURED.length;const s=byId[FEATURED[heroIdx]];const hero=$("#hero");
  hero.style.setProperty("--tint",s.tint);hero.style.setProperty("--c",s.c);
+ const sc=$("#scene");if(sc.dataset.t!==SCENE_OF[s.id]+s.id){sc.dataset.t=SCENE_OF[s.id]+s.id;sc.innerHTML=sceneSvg(s.id)}
  $("#giant").innerHTML=Array(6).fill(`<span>${s.name}</span>`).join("");
  ["nowName","nowTag","nowPrice"].forEach(id=>{const e=$("#"+id);e.classList.remove("swap");void e.offsetWidth;e.classList.add("swap")});
  $("#nowName").textContent=s.name;$("#nowTag").textContent=s.tagline;$("#nowPrice").textContent=money(PRICE);
@@ -647,6 +711,8 @@ $("#flavDots").addEventListener("click",e=>{const b=e.target.closest("[data-h]")
 $("#nowAdd").addEventListener("click",e=>{const id=FEATURED[heroIdx];add("shot:"+id,1,$("#heroBottleWrap"));toast("Added "+byId[id].name)});
 $("#ctaAdd").addEventListener("click",()=>{add("bundle:starter",1,$("#ctaRow"));toast("Added Starter Six")});
 setHero(0);autoHero();
+// parallax: scene layers drift with the cursor
+addEventListener("pointermove",e=>{if(reduce||e.pointerType!=="mouse")return;const x=e.clientX/innerWidth-.5,y=e.clientY/innerHeight-.5;document.querySelectorAll("#scene [data-d]").forEach(g=>{const d=+g.dataset.d;g.style.transform=`translate(${-x*d}px,${-y*d*.5}px)`})},{passive:true});
 
 /* products */
 let goal="all";const qtyPick={};
@@ -1250,7 +1316,7 @@ body.qv-open #gl{z-index:93}
   card.innerHTML=`<button class="qv-x" data-qv-close aria-label="Close">✕</button>
    <button class="qv-nav prev" data-qv-step="-1" aria-label="Previous shot">‹</button>
    <button class="qv-nav next" data-qv-step="1" aria-label="Next shot">›</button>
-   <div class="qv-art${mode==="photo"?" photo":""}"><img class="qv-photo" src="img/${id}.webp" alt="${s.name} bottle photo" decoding="async"><div class="qv-view" role="group" aria-label="View"><button data-view="3d" aria-pressed="${mode==="3d"}">3D bottle</button><button data-view="photo" aria-pressed="${mode==="photo"}">Real photo</button></div><div class="qv-stage">${b3(id)}${ingFor(s).map((g,i)=>`<button class="ingr-pop${POS[i][3]}" data-qing="${g}" style="--x:${POS[i][0]};--y:${POS[i][1]};--sz:${POS[i][2]}px;--dl:${150+i*140}ms" aria-label="${ING[g].n}"><svg viewBox="0 0 80 80" aria-hidden="true">${ING[g].s}</svg><span class="nm">${ING[g].n}</span></button>`).join("")}</div><p class="qv-hint">Drag the bottle · tap an ingredient</p></div>
+   <div class="qv-art${mode==="photo"?" photo":""}"><div class="qv-scene">${sceneSvg(id,true)}</div><img class="qv-photo" src="img/${id}.webp" alt="${s.name} bottle photo" decoding="async"><div class="qv-view" role="group" aria-label="View"><button data-view="3d" aria-pressed="${mode==="3d"}">3D bottle</button><button data-view="photo" aria-pressed="${mode==="photo"}">Real photo</button></div><div class="qv-stage">${b3(id)}${ingFor(s).map((g,i)=>`<button class="ingr-pop${POS[i][3]}" data-qing="${g}" style="--x:${POS[i][0]};--y:${POS[i][1]};--sz:${POS[i][2]}px;--dl:${150+i*140}ms" aria-label="${ING[g].n}"><svg viewBox="0 0 80 80" aria-hidden="true">${ING[g].s}</svg><span class="nm">${ING[g].n}</span></button>`).join("")}</div><p class="qv-hint">Drag the bottle · tap an ingredient</p></div>
    <div class="qv-info">
     ${s.tag?`<span class="qv-tag">${s.tag}</span>`:""}
     <h3 id="qvName">${s.name}</h3>
