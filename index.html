@@ -341,6 +341,12 @@ footer{background:var(--deep);color:#fff;padding-block:56px}
 .qv-art::before{display:none}
 @media (max-width:760px){.ben-stage.ph{min-height:340px}}
 
+
+.crate{position:relative;display:block;aspect-ratio:1408/768;background:#F4F6F6 url(img/crate.webp) center/100% 100% no-repeat;padding:0;border-radius:22px;box-shadow:none}
+.crate .slot{position:absolute;left:var(--sx);bottom:var(--sy);width:6.6%;aspect-ratio:auto;background:none;padding:0;border-radius:0;transform:translateX(-50%);display:block}
+.crate .slot .b3d{width:100%}
+.crate .slot:empty{display:none}
+
 /* 3D */
 .b3d{position:relative;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
 .b3d:active{cursor:grabbing}
@@ -800,7 +806,7 @@ $("#bundleGrid").addEventListener("click",e=>{const t=e.target.closest("[data-bu
 let boxSize=12,box=[],lastDrop=-1;
 function renderByo(){
  $("#sizes").innerHTML=[6,12].map(n=>`<button class="chip" data-size="${n}" aria-pressed="${n===boxSize}">${n} shots</button>`).join("");
- $("#crate").innerHTML=Array.from({length:boxSize},(_,i)=>{const s=box[i]&&byId[box[i]];return`<div class="slot">${s?(i===lastDrop?b3(box[i]):b3(box[i]).replace('class="b3d"','class="b3d" style="animation:none"'))+`<button data-rm="${i}" aria-label="Remove ${s.name}"></button>`:""}</div>`}).join("");
+ $("#crate").innerHTML=Array.from({length:boxSize},(_,i)=>{const s=box[i]&&byId[box[i]];return`<div class="slot" style="--sx:${[15.6,29.6,43.9,56.2,69.6,84.4][i%6]}%;--sy:${i<6?54.6:29.4}%">${s?(i===lastDrop?b3(box[i]):b3(box[i]).replace('class="b3d"','class="b3d" style="animation:none"'))+`<button data-rm="${i}" aria-label="Remove ${s.name}"></button>`:""}</div>`}).join("");
  $("#byoPrice").textContent=money(boxPrice(boxSize));
  const left=boxSize-box.length;
  $("#byoNote").textContent=left?`${left} spot${left>1?"s":""} left. Fill the crate to add it.`:`Full! ${summarize(box)}`;
