@@ -12,7 +12,7 @@
 <style>
 /* Layout: bright juice-bar storefront — flavor-colored blocks that flow into each other with liquid waves; one big 3D bottle leads */
 :root{
-  --bg:#FFFFFF; --ink:#14261C; --muted:#4D5F53; --line:#EDEBE5;
+  --bg:#F2F5EE; --ink:#14261C; --muted:#4D5F53; --line:#EDEBE5;
   --accent:#FF5A1F; --leaf:#1E7A45; --pop:#FFD23F; --coral:#1E7A45; --mint:#DDF3E4; --deep:#123D27; --blush:#FFE3EC;
   --c:#E9A520; --tint:#FFF0C9;
   --display:"Bricolage Grotesque", "Arial Black", system-ui, sans-serif;
@@ -326,7 +326,11 @@ footer{background:var(--deep);color:#fff;padding-block:56px}
 .giant,#slices{display:none!important}
 .waves svg,.ribbon .track,.hero h1 .wob,.photo-scene img{animation:none!important}
 .ribbon .track{justify-content:center;width:100%;flex-wrap:wrap;row-gap:6px}
-.ribbon .track span:nth-child(n+7){display:none}
+.ribbon .track{flex-wrap:nowrap!important;gap:28px}
+.ribbon .track span:nth-child(n+5){display:none}
+.ribbon span::after{margin-left:28px}
+.ribbon .track span:nth-child(4)::after{content:none}
+@media (max-width:760px){.ribbon .track span:nth-child(n+3){display:none}.ribbon .track span:nth-child(2)::after{content:none}}
 .photo-scene img{transform:none!important}
 .scene .ph-fallback{position:absolute;inset:0;background:linear-gradient(135deg,var(--tint),#fff)}
 .photo-scene img{position:relative;z-index:1}
@@ -417,6 +421,8 @@ footer{background:var(--deep);color:#fff;padding-block:56px}
 .crate .b3d::after{bottom:0;height:4%}
 .line-item .sw img{filter:drop-shadow(0 3px 3px rgba(20,16,10,.18))}
 
+#shop .chip:not([aria-pressed="true"]),.towns span{background:#FBFCF9}
+.faq details{border-bottom-color:rgba(20,38,28,.35)}
 /* 3D */
 .b3d{position:relative;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
 .b3d:active{cursor:grabbing}
@@ -504,8 +510,8 @@ input:focus,select:focus,textarea:focus{border-color:var(--ink);outline:none}
       </div>
     </div>
     <div class="waves" aria-hidden="true">
-      <svg class="back" viewBox="0 0 2880 100" preserveAspectRatio="none"><path fill="#FFFFFF" d="M0 50 C240 95 480 5 720 50 S1200 95 1440 50 S1920 5 2160 50 S2640 95 2880 50 V100 H0Z"/></svg>
-      <svg viewBox="0 0 2880 100" preserveAspectRatio="none"><path fill="#FFFFFF" d="M0 60 C360 20 720 100 1080 60 S1440 30 1440 60 S1800 20 2160 60 S2520 100 2880 60 V100 H0Z"/></svg>
+      <svg class="back" viewBox="0 0 2880 100" preserveAspectRatio="none"><path fill="#F2F5EE" d="M0 50 C240 95 480 5 720 50 S1200 95 1440 50 S1920 5 2160 50 S2640 95 2880 50 V100 H0Z"/></svg>
+      <svg viewBox="0 0 2880 100" preserveAspectRatio="none"><path fill="#F2F5EE" d="M0 60 C360 20 720 100 1080 60 S1440 30 1440 60 S1800 20 2160 60 S2520 100 2880 60 V100 H0Z"/></svg>
     </div>
   </section>
 
@@ -581,8 +587,8 @@ input:focus,select:focus,textarea:focus{border-color:var(--ink);outline:none}
     </div>
   </section>
   <div class="waves" aria-hidden="true" style="background:var(--coral)">
-    <svg class="back" viewBox="0 0 2880 100" preserveAspectRatio="none"><path fill="#FFFFFF" d="M0 50 C240 95 480 5 720 50 S1200 95 1440 50 S1920 5 2160 50 S2640 95 2880 50 V100 H0Z"/></svg>
-    <svg viewBox="0 0 2880 100" preserveAspectRatio="none"><path fill="#FFFFFF" d="M0 60 C360 20 720 100 1080 60 S1440 30 1440 60 S1800 20 2160 60 S2520 100 2880 60 V100 H0Z"/></svg>
+    <svg class="back" viewBox="0 0 2880 100" preserveAspectRatio="none"><path fill="#F2F5EE" d="M0 50 C240 95 480 5 720 50 S1200 95 1440 50 S1920 5 2160 50 S2640 95 2880 50 V100 H0Z"/></svg>
+    <svg viewBox="0 0 2880 100" preserveAspectRatio="none"><path fill="#F2F5EE" d="M0 60 C360 20 720 100 1080 60 S1440 30 1440 60 S1800 20 2160 60 S2520 100 2880 60 V100 H0Z"/></svg>
   </div>
 
   <section id="local">
