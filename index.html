@@ -8,7 +8,6 @@
 <title>Mel Organic Shots</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://images.unsplash.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700;800&family=Caveat:wght@600;700&display=swap">
 <style>
 /* Layout: bright juice-bar storefront — flavor-colored blocks that flow into each other with liquid waves; one big 3D bottle leads */
@@ -330,6 +329,9 @@ footer{background:var(--deep);color:#fff;padding-block:56px}
 .ribbon .track span:nth-child(n+7){display:none}
 .photo-scene img{transform:none!important}
 .scene .ph-fallback{position:absolute;inset:0;background:linear-gradient(135deg,var(--tint),#fff)}
+.photo-scene img{position:relative;z-index:1}
+.photo-scene::after{z-index:2}
+.hero.dark-scene .hero-stage .halo{opacity:.18!important}
 .ben-stage.ph{background:var(--tint,#eee) center/cover no-repeat;border-radius:28px;min-height:440px;overflow:hidden;box-shadow:0 30px 60px -36px rgba(20,38,28,.7);isolation:isolate}
 .ben-stage.ph::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.35),transparent 55%);z-index:-1}
 .ben-stage.ph .b3d{position:relative;z-index:1}
@@ -684,12 +686,12 @@ let toastT;function toast(msg){const t=$("#toast");t.textContent=msg;t.classList
 
 /* hero flavor switcher */
 const U=(id,w)=>`https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=70`;
-const SCENE_PHOTO={m:"1490682143684-14369e18dce8",o:"1535262412227-85541e910204"};
-const BEN_PHOTO={"Ginger":"1758055660285-d32b7b3b1e77","Turmeric":"1768729341078-9da4e0ea959e","Beet":"1757513671720-e95bb606ac82","Elderberry":"1723239714209-1f124b16572b","Citrus":"1577234286642-fc512a5f8f11","Vinegar & garlic":"1540148426945-6cf22a6b2383","Sea moss":"1541417904950-b855846fe074","Wheatgrass":"1607718037487-5625a5ff5abf"};
+const SCENE_PHOTO={m:"img/mountains.webp",o:"img/ocean.webp"};
+const BEN_PHOTO={"Ginger":"img/ben-ginger.webp","Turmeric":"img/ben-turmeric.webp","Beet":"img/ben-beet.webp","Elderberry":"img/ben-elder.webp","Citrus":"img/ben-citrus.webp","Vinegar & garlic":"img/ben-garlic.webp","Sea moss":"img/ben-seamoss.webp","Wheatgrass":"img/ben-wheatgrass.webp"};
 function heroPhoto(st){
  if(st==="f")return `<div class="sc photo-scene"><img src="img/rainforest.webp" alt="" decoding="async"></div>`;
  const id=SCENE_PHOTO[st];
- return `<div class="sc photo-scene"><div class="ph-fallback"></div><img src="${U(id,1600)}" srcset="${U(id,800)} 800w, ${U(id,1600)} 1600w, ${U(id,2200)} 2200w" sizes="100vw" alt="" decoding="async" onerror="this.remove()"></div>`;
+ return `<div class="sc photo-scene"><div class="ph-fallback"></div><img src="${id}" alt="" decoding="async"></div>`;
 }
 
 const SCENE_OF={ginger:"m",turmeric:"m",carrot:"m",firecider:"m",blue:"o",pineapple:"o",seamoss:"o",citrus:"o",aloe:"o",green:"f",elder:"f",beet:"f",cranberry:"f",garlic:"f",acv:"f"};
@@ -838,7 +840,7 @@ const BEN_ING={"Ginger":["ginger","lemon","honey","cayenne"],"Turmeric":["turmer
 const ING_POS=[["2%","4%",84,""],["2%","0%",78," r"],["2%","60%",76,""],["2%","56%",86," r"]];
 function ingStage(b){
  const ph=BEN_PHOTO[b.k];
- return `<div class="ben-stage ph" style="background-image:url('${U(ph,900)}');--tint:${byId[b.in[0]].tint}">${b3(b.in[0])}</div>`;
+ return `<div class="ben-stage ph" style="background-image:url('${ph}');--tint:${byId[b.in[0]].tint}">${b3(b.in[0])}</div>`;
 }
 
 let benIdx=0;
