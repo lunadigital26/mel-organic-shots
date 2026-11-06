@@ -368,6 +368,7 @@ footer{background:var(--deep);color:#fff;padding-block:56px}
 @keyframes drift{0%,100%{transform:translateY(0) rotate(-1.4deg)}50%{transform:translateY(-6px) rotate(1.4deg)}}
 @keyframes rise{from{transform:translateY(14px);opacity:.6}}
 .reveal.in{animation-duration:1.1s!important}
+.done img{animation:none}
 .bundle:hover .mini-row .b3d:nth-child(odd),.bundle:hover .mini-row .b3d:nth-child(even){transform:none}
 @media (hover:hover){
  .bundle .mini-row .b3d{transition:transform .9s cubic-bezier(.3,1.4,.5,1)}
@@ -377,6 +378,30 @@ footer{background:var(--deep);color:#fff;padding-block:56px}
  .bundle .mini-row .b3d:nth-child(6){transition-delay:.25s}
 }
 @media (hover:none){.bundle:hover{transform:none;box-shadow:none}.card:hover{transform:none}}
+
+
+/* real 360° photo bottles */
+.b3d{position:relative;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none;display:flex!important;align-items:flex-end;justify-content:center}
+.b3d:active{cursor:grabbing}
+.b3d img.sp{display:block;width:auto;height:100%;max-width:none;pointer-events:none;-webkit-user-drag:none}
+.hero-stage .b3d{width:auto;height:min(520px,58vh)}
+.card-art .b3d{position:absolute;inset:14px 0 6px}
+.card-art .b3d img.sp{height:100%}
+.bundle{min-width:0}
+.mini-row{height:auto;min-width:0;justify-content:center;gap:2%}
+.mini-row .b3d{flex:0 1 14.5%;min-width:0;height:auto}
+.mini-row .b3d img.sp{width:100%;height:auto}
+.cta-row{min-width:0;height:auto;gap:2%}
+.cta-row .b3d{flex:0 1 13%;max-width:72px;min-width:0;height:auto}
+.cta-row .b3d img.sp{width:100%;height:auto}
+.cta-row .b3d{width:auto;height:170px}
+.crate .slot{width:auto!important;height:22.5%}
+.crate .slot .b3d{height:100%;width:auto}
+.ben-stage .b3d,.panel .b3d{width:auto!important;max-width:none!important;height:min(330px,70%)}
+.qv-stage .b3d{width:auto;height:min(380px,80%)}
+.line-item .sw img{height:58px;width:auto;display:block}
+.cart-hero-img{height:110px;width:auto;display:block;margin:0 auto}
+@media (max-width:760px){.hero-stage .b3d{height:min(380px,48vh)}.ben-stage .b3d,.panel .b3d{height:260px}.qv-stage .b3d{height:280px}}
 
 /* 3D */
 .b3d{position:relative;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
@@ -606,7 +631,6 @@ input:focus,select:focus,textarea:focus{border-color:var(--ink);outline:none}
   </div>
 </footer>
 
-<canvas id="gl" aria-hidden="true"></canvas>
 <div class="scrim" id="scrim"></div>
 <aside class="drawer" id="drawer" aria-label="Your order" aria-hidden="true">
   <div class="drawer-head"><h3 id="drawerTitle">Your order</h3><button class="x" id="closeCart" aria-label="Close">✕</button></div>
@@ -614,7 +638,6 @@ input:focus,select:focus,textarea:focus{border-color:var(--ink);outline:none}
 </aside>
 <div class="toast" id="toast" role="status"></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 const SHOTS=[
  {id:"ginger",name:"Ginger Fire",tagline:"the wake-up call",c:"#E9A520",tint:"#FFF0C9",ingr:"Ginger root, lemon, raw honey, cayenne",perks:["Digestion","Energy"],goals:["energy","digest"],tag:"Bestseller"},
@@ -673,7 +696,24 @@ function bottle(color,label){
   <rect x="15" y="52" width="4" height="64" rx="2" fill="rgba(255,255,255,.35)"/>
  </svg>`;
 }
-function b3(id){const x=byId[id];return `<div class="b3d" data-b="${id}">${bottle(x.c,x.name)}</div>`}
+
+const SPIN_N=8;
+const spinSrc=(id,f)=>`spin/${id}/${((f%SPIN_N)+SPIN_N)%SPIN_N}.webp`;
+function b3(id,eager){const x=byId[id];return `<div class="b3d" data-b="${id}"><img class="sp" src="${spinSrc(id,0)}" alt="${x.name} bottle" ${eager?"":'loading="lazy" '}decoding="async" draggable="false" width="200" height="540"></div>`}
+const spinState=new WeakMap(),preloaded={};
+function preloadSpin(id){if(preloaded[id])return;preloaded[id]=1;for(let f=1;f<SPIN_N;f++){const i=new Image();i.src=spinSrc(id,f)}}
+function setFrame(el,pos){const v=spinState.get(el);v.pos=pos;const f=Math.round(pos);if(f!==v.f){v.f=f;const im=el.querySelector("img.sp");if(im)im.src=spinSrc(el.dataset.b,f)}}
+function st(el){let v=spinState.get(el);if(!v){v={pos:0,f:0,vel:0,drag:false,anim:0};spinState.set(el,v)}return v}
+function turn(el,dir){const v=st(el);preloadSpin(el.dataset.b);cancelAnimationFrame(v.anim);const start=v.pos,end=Math.round(start)+SPIN_N*(dir||1),t0=performance.now(),D=900;
+ (function step(now){const k=Math.min(1,(now-t0)/D),e=1-Math.pow(1-k,3);setFrame(el,start+(end-start)*e);if(k<1)v.anim=requestAnimationFrame(step)})(t0)}
+window.kickBottle=el=>{if(el&&el.dataset&&el.dataset.b)turn(el,1)};
+document.addEventListener("pointerdown",e=>{const el=e.target.closest(".b3d");if(!el||!el.dataset.b)return;const v=st(el);preloadSpin(el.dataset.b);cancelAnimationFrame(v.anim);v.drag=true;v.lx=e.clientX;v.vel=0;try{el.setPointerCapture(e.pointerId)}catch(_){}});
+document.addEventListener("pointermove",e=>{const el=e.target.closest&&e.target.closest(".b3d");if(!el)return;const v=spinState.get(el);if(!v||!v.drag)return;const d=(e.clientX-v.lx)/38;v.lx=e.clientX;v.vel=d;setFrame(el,v.pos+d)});
+const spinUp=e=>{const el=e.target.closest&&e.target.closest(".b3d");if(!el)return;const v=spinState.get(el);if(!v||!v.drag)return;v.drag=false;
+ (function coast(){if(Math.abs(v.vel)>0.02){setFrame(el,v.pos+v.vel);v.vel*=0.9;v.anim=requestAnimationFrame(coast)}else{const tgt=Math.round(v.pos);const s=v.pos;let k=0;(function snap(){k+=0.2;setFrame(el,s+(tgt-s)*Math.min(1,k));if(k<1)v.anim=requestAnimationFrame(snap)})()}})()};
+document.addEventListener("pointerup",spinUp);document.addEventListener("pointercancel",spinUp);
+if(matchMedia("(hover:hover)").matches){document.addEventListener("pointerover",e=>{const card=e.target.closest(".card");if(!card||card.contains(e.relatedTarget))return;const el=card.querySelector(".b3d");if(el)turn(el,1)})}
+
 
 
 const PRICE=4.5;
@@ -706,9 +746,9 @@ let customBoxes=0;
 const boxPrice=n=>n>=12?n*4:n*PRICE-3;
 function summarize(items){const c={};items.forEach(i=>c[i]=(c[i]||0)+1);return Object.entries(c).map(([k,v])=>v+"× "+byId[k].name).join(", ")}
 function itemInfo(key){
- if(key.startsWith("shot:")){const s=byId[key.slice(5)];return{name:s.name,sub:"2 oz shot",price:PRICE,color:s.c,tint:s.tint,label:s.name}}
- if(key.startsWith("bundle:")){const b=BUNDLES.find(b=>b.id===key.slice(7));return{name:b.name,sub:b.items.length+" shots",price:b.price,color:byId[b.items[0]].c,tint:byId[b.items[0]].tint,label:b.name}}
- if(key.startsWith("box:")){const d=JSON.parse(decodeURIComponent(key.slice(4)));return{name:"Custom box of "+d.items.length,sub:summarize(d.items),price:boxPrice(d.items.length),color:byId[d.items[0]].c,tint:byId[d.items[0]].tint,label:"Custom Box"}}
+ if(key.startsWith("shot:")){const s=byId[key.slice(5)];return{id:s.id,name:s.name,sub:"2 oz shot",price:PRICE,color:s.c,tint:s.tint,label:s.name}}
+ if(key.startsWith("bundle:")){const b=BUNDLES.find(b=>b.id===key.slice(7));return{id:b.items[0],name:b.name,sub:b.items.length+" shots",price:b.price,color:byId[b.items[0]].c,tint:byId[b.items[0]].tint,label:b.name}}
+ if(key.startsWith("box:")){const d=JSON.parse(decodeURIComponent(key.slice(4)));return{id:d.items[0],name:"Custom box of "+d.items.length,sub:summarize(d.items),price:boxPrice(d.items.length),color:byId[d.items[0]].c,tint:byId[d.items[0]].tint,label:"Custom Box"}}
 }
 function subtotal(){return Object.entries(cart).reduce((t,[k,q])=>t+itemInfo(k).price*q,0)}
 function countAll(){return Object.values(cart).reduce((a,b)=>a+b,0)}
@@ -783,8 +823,8 @@ function setHero(i,kick){
  $("#nowName").textContent=s.name;$("#nowTag").textContent=s.tagline;$("#nowPrice").textContent=money(PRICE);
  document.querySelectorAll("#flavDots button").forEach((b,j)=>b.setAttribute("aria-pressed",j===heroIdx));
  const wrap=$("#heroBottleWrap");
- if(!wrap.firstChild){wrap.innerHTML=b3(s.id);wrap.firstChild.dataset.hero="1"}
- else{wrap.firstChild.dataset.b=s.id;wrap.firstChild.innerHTML=bottle(s.c,s.name);if(kick&&window.kickBottle)window.kickBottle(wrap.firstChild)}
+ if(!wrap.firstChild){wrap.innerHTML=b3(s.id,true);wrap.firstChild.dataset.hero="1"}
+ else{const el=wrap.firstChild;el.dataset.b=s.id;const v=spinState.get(el);if(v){cancelAnimationFrame(v.anim);v.pos=0;v.f=0}el.querySelector("img.sp").src=spinSrc(s.id,0);if(kick)window.kickBottle(el)}
  $("#slices").innerHTML="";
 }
 function autoHero(){clearInterval(heroTimer);if(!reduce)heroTimer=setInterval(()=>{if(!$("#hero").matches(":hover"))setHero(heroIdx+1,false)},4200)}
@@ -913,7 +953,7 @@ function closeDrawer(){$("#drawer").classList.remove("open");$("#scrim").classLi
 $("#openCart").onclick=()=>openDrawer("cart");$("#closeCart").onclick=closeDrawer;$("#scrim").onclick=closeDrawer;
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeDrawer()});
 function lines(){return Object.entries(cart).map(([k,q])=>{const i=itemInfo(k);return`
- <div class="line-item" style="--li:${i.tint}"><div class="sw">${bottle(i.color,i.label)}</div>
+ <div class="line-item" style="--li:${i.tint}"><div class="sw"><img src="${spinSrc(i.id,0)}" alt=""></div>
   <div><b>${i.name}</b><small>${i.sub}</small><br><button class="rm" data-rmk="${encodeURIComponent(k)}">Remove</button></div>
   <div style="text-align:right"><div class="stepper" style="transform:scale(.85);transform-origin:right"><button data-dk="${encodeURIComponent(k)}" aria-label="Fewer">−</button><output>${q}</output><button data-ik="${encodeURIComponent(k)}" aria-label="More">+</button></div><b style="font-variant-numeric:tabular-nums">${money(i.price*q)}</b></div>
  </div>`}).join("")}
@@ -928,7 +968,7 @@ function renderCart(){
  $("#cartCount").textContent=countAll();
  const body=$("#drawerBody");
  if(view==="done")return;
- if(!countAll()){$("#drawerTitle").textContent="Your order";body.innerHTML=`<div class="empty"><div style="width:60px;margin:0 auto">${bottle("#E9A520","Ginger Fire")}</div><p style="margin-top:14px">Nothing in here yet.</p><a class="btn orange small" href="#shop" style="margin-top:14px" onclick="closeDrawer()">Browse shots</a></div>`;return}
+ if(!countAll()){$("#drawerTitle").textContent="Your order";body.innerHTML=`<div class="empty"><img class="cart-hero-img" src="spin/ginger/0.webp" alt=""><p style="margin-top:14px">Nothing in here yet.</p><a class="btn orange small" href="#shop" style="margin-top:14px" onclick="closeDrawer()">Browse shots</a></div>`;return}
  if(view==="cart"){
   const sub=subtotal(),pct=Math.min(100,sub/FREE*100);
   $("#drawerTitle").textContent="Your order";
@@ -969,7 +1009,7 @@ $("#drawerBody").addEventListener("submit",e=>{
  const total=subtotal()+(method==="delivery"&&subtotal()<FREE?DELIV:0);
  const num="MEL-"+Math.floor(1000+Math.random()*9000),when=$("#f-date").value;
  view="done";$("#drawerTitle").textContent="Order received";
- $("#drawerBody").innerHTML=`<div class="done">${bottle("#FF5A1F","Thank You")}<p class="big">Thank you, ${name.split(" ")[0]}!</p>
+ $("#drawerBody").innerHTML=`<div class="done"><img class="cart-hero-img" src="spin/turmeric/0.webp" alt=""><p class="big">Thank you, ${name.split(" ")[0]}!</p>
   <p>Order <b>${num}</b> · ${money(total)}<br>${method==="delivery"?"Delivery":"Pickup"} on ${when}</p>
   <p>Mel will text <b>${phone}</b> to confirm${method==="pickup"?" and send the pickup address":""}.</p>
   <p class="note">Demo checkout: orders will go to Mel once the shop is connected to Square or WooCommerce.</p>
@@ -979,142 +1019,7 @@ $("#drawerBody").addEventListener("submit",e=>{
 });
 renderCart();
 </script>
-<script>
-(function(){
- if(!window.THREE)return;
- const canvas=document.getElementById("gl");
- let renderer;
- try{renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});}catch(e){return}
- if(!renderer.getContext())return;
- document.documentElement.classList.add("gl");
- renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
- renderer.outputEncoding=THREE.sRGBEncoding;
- renderer.toneMapping=THREE.LinearToneMapping;renderer.toneMappingExposure=0.95;
- renderer.autoClear=false;renderer.setClearColor(0x000000,0);
 
- const scene=new THREE.Scene();
- // studio environment for glass reflections
- const env=new THREE.Scene();env.background=new THREE.Color(0xdfe6e1);
- const panel=(w,h,rgb,pos)=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({color:new THREE.Color(...rgb),side:THREE.DoubleSide}));m.position.set(...pos);m.lookAt(0,0,0);env.add(m)};
- panel(8,3,[6,6,6],[0,5,2]);panel(2.5,7,[4,3.4,2.6],[5,1,2.5]);panel(2.5,7,[1.8,2.4,3],[-5,1,1.5]);panel(7,2,[1.6,1.6,1.6],[0,0,-5]);
- const pm=new THREE.PMREMGenerator(renderer);scene.environment=pm.fromScene(env,0.03).texture;
- scene.add(new THREE.HemisphereLight(0xffffff,0xd9e6dc,0.5));
- const key=new THREE.DirectionalLight(0xffffff,1.5);key.position.set(2.5,4,5);scene.add(key);
- const rim=new THREE.DirectionalLight(0xfff1e0,0.8);rim.position.set(-3,2.5,-4);scene.add(rim);
-
- const V=(a)=>a.map(([x,y])=>new THREE.Vector2(x,y));
- const pivot=new THREE.Group();scene.add(pivot);
- const g=new THREE.Group();g.position.y=-1.12;pivot.add(g);
- const glass=new THREE.Mesh(new THREE.LatheGeometry(V([[0.001,0],[0.44,0],[0.5,0.06],[0.5,1.5],[0.47,1.68],[0.32,1.86],[0.22,1.98],[0.21,2.1],[0.235,2.12],[0.235,2.16],[0.21,2.18]]),72),
-  new THREE.MeshPhysicalMaterial({color:0xffffff,roughness:0.04,metalness:0,transparent:true,opacity:0.14,clearcoat:1,clearcoatRoughness:0.03,envMapIntensity:0.9,side:THREE.DoubleSide,depthWrite:false}));
- glass.renderOrder=2;
- const liquidMat=new THREE.MeshPhysicalMaterial({color:0xff8800,roughness:0.18,clearcoat:0.7,clearcoatRoughness:0.1,emissive:0xff8800,emissiveIntensity:0.1});
- const liquid=new THREE.Mesh(new THREE.LatheGeometry(V([[0.001,0.05],[0.45,0.05],[0.475,0.1],[0.475,1.44],[0.3,1.44],[0.001,1.44]]),72),liquidMat);
- const cap=new THREE.Mesh(new THREE.CylinderGeometry(0.255,0.255,0.32,48),new THREE.MeshStandardMaterial({color:0x23402f,roughness:0.38,metalness:0.15}));cap.position.y=2.3;
- const capTop=new THREE.Mesh(new THREE.CylinderGeometry(0.24,0.255,0.03,48),new THREE.MeshStandardMaterial({color:0xFF6A1F,roughness:0.4}));capTop.position.y=2.475;
- const blank=document.createElement("canvas");blank.width=blank.height=4;
- const labelMat=new THREE.MeshStandardMaterial({map:new THREE.CanvasTexture(blank),roughness:0.85,metalness:0,envMapIntensity:0.25});
- const label=new THREE.Mesh(new THREE.CylinderGeometry(0.508,0.508,0.98,96,1,true,-Math.PI*0.62,Math.PI*1.24),labelMat);label.position.y=0.78;
- g.add(liquid,label,cap,capTop,glass);
- // soft contact shadow
- const sc=document.createElement("canvas");sc.width=sc.height=128;const sx=sc.getContext("2d");
- const gr=sx.createRadialGradient(64,64,4,64,64,62);gr.addColorStop(0,"rgba(0,0,0,.55)");gr.addColorStop(1,"rgba(0,0,0,0)");sx.fillStyle=gr;sx.fillRect(0,0,128,128);
- const shadow=new THREE.Mesh(new THREE.PlaneGeometry(1.7,1.7),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(sc),transparent:true,depthWrite:false}));
- shadow.rotation.x=-Math.PI/2;shadow.position.y=-1.125;shadow.renderOrder=-1;scene.add(shadow);
-
- const camera=new THREE.PerspectiveCamera(28,1,0.1,50);
- const tanh=Math.tan(THREE.MathUtils.degToRad(14));
-
- const tex={};
- function fitFont(x,txt,weight,size,fam,max){let f=size;x.font=`${weight} ${f}px ${fam}`;while(x.measureText(txt).width>max&&f>12){f-=2;x.font=`${weight} ${f}px ${fam}`}return f}
- function labelTex(id){
-  if(tex[id])return tex[id];
-  const s=byId[id];const cv=document.createElement("canvas");cv.width=1024;cv.height=512;const x=cv.getContext("2d");
-  x.fillStyle="#FFFDF7";x.fillRect(0,0,1024,512);
-  x.fillStyle=s.c;x.fillRect(0,0,1024,12);x.fillRect(0,500,1024,12);
-  x.save();x.translate(462,34);x.scale(100/48,100/48);
-  x.fillStyle="#FF6A1F";x.beginPath();x.arc(24,24,23,0,Math.PI*2);x.fill();
-  x.fillStyle="#FFFDF7";x.fill(new Path2D("M24 10c0 0-9 11-9 17.5a9 9 0 0 0 18 0C33 21 24 10 24 10z"));
-  x.fillStyle="#F2B233";x.fill(new Path2D("M24 17c0 0-5 6.5-5 10.2a5 5 0 0 0 10 0C29 23.5 24 17 24 17z"));
-  x.fillStyle="#2F7D4A";x.fill(new Path2D("M25 11c3-5 9-6 12-5-1 5-6 8-12 5z"));
-  x.restore();
-  x.textAlign="center";
-  x.fillStyle="#173326";x.font='600 112px Caveat, cursive';x.fillText("Mel",512,226);
-  x.fillStyle="#4F6656";x.font='700 24px Figtree, Arial, sans-serif';
-  try{x.letterSpacing="7px"}catch(e){}x.fillText("ORGANIC SHOTS",516,264);try{x.letterSpacing="0px"}catch(e){}
-  x.fillStyle=s.c;x.beginPath();if(x.roundRect){x.roundRect(212,288,600,96,18);x.fill()}else x.fillRect(212,288,600,96);
-  const name=s.name.toUpperCase();const f=fitFont(x,name,800,60,'"Bricolage Grotesque", Arial, sans-serif',550);
-  x.fillStyle="#FFFFFF";x.fillText(name,512,336+f*0.36);
-  x.fillStyle="#4F6656";x.font='600 22px Figtree, Arial, sans-serif';x.fillText("2 FL OZ  ·  COLD-PRESSED  ·  ORGANIC  ·  METHUEN, MA",512,428);
-  fitFont(x,s.ingr.toUpperCase(),500,19,'Figtree, Arial, sans-serif',880);x.fillText(s.ingr.toUpperCase(),512,466);
-  const t=new THREE.CanvasTexture(cv);t.encoding=THREE.sRGBEncoding;t.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
-  tex[id]=t;return t;
- }
-
- const touch=matchMedia("(hover: none), (pointer: coarse)").matches;
- const states=new WeakMap();
- let mx=0,my=0;addEventListener("pointermove",ev=>{mx=ev.clientX/innerWidth-.5;my=ev.clientY/innerHeight-.5},{passive:true});
- window.kickBottle=el=>{const v=states.get(el);if(v){v.vel=0.55;if(v.wasH)v.tg+=Math.PI*2}};
- function state(el){
-  let v=states.get(el);
-  if(!v){
-   const idx=[...el.parentNode.children].filter(c=>c.classList&&c.classList.contains("b3d")).indexOf(el),row=!!el.closest(".mini-row,.cta-row,.crate");v={rot:0.3,vel:0,drag:false,phase:row?idx*0.7:Math.random()*6.28,hov:0,row};states.set(el,v);
-   let lx=0;
-   el.addEventListener("pointerdown",e=>{v.drag=true;lx=e.clientX;v.vel=0;try{el.setPointerCapture(e.pointerId)}catch(_){}});
-   el.addEventListener("pointermove",e=>{if(!v.drag)return;const d=(e.clientX-lx)*0.013;lx=e.clientX;v.rot+=d;v.vel=d});
-   const up=()=>{v.drag=false};el.addEventListener("pointerup",up);el.addEventListener("pointercancel",up);el.addEventListener("lostpointercapture",up);
-  }
-  return v;
- }
-
- const header=document.querySelector("header");
- const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
- let last=performance.now(),W=0,H=0;
- function frame(now){
-  requestAnimationFrame(frame);
-  const dt=Math.min(0.05,(now-last)/1000);last=now;const t=now/1000;
-  const cw=canvas.clientWidth,ch=canvas.clientHeight;
-  if(cw!==W||ch!==H){W=cw;H=ch;renderer.setSize(W,H,false)}
-  renderer.setScissorTest(false);renderer.clear();renderer.setScissorTest(true);
-  const qvOpen=document.body.classList.contains("qv-open");
-  const topEdge=qvOpen?0:Math.max(0,header.getBoundingClientRect().bottom);
-  document.querySelectorAll(".b3d").forEach(el=>{
-   const s=byId[el.dataset.b];if(!s||!el.offsetParent)return;
-   if(qvOpen&&!el.closest(".qv"))return;
-   if(touch&&!el.dataset.hero&&!el.closest(".qv")){if(!el.classList.contains("flat")){el.classList.add("flat");el.style.setProperty("--i",[...el.parentNode.children].indexOf(el))}return}
-   const rc=el.getBoundingClientRect();
-   if(rc.width<4||rc.bottom<=topEdge||rc.top>=H||rc.right<=0||rc.left>=W)return;
-   const v=state(el);
-   const host=el.closest(".card,.bundle,.panel,.hero-stage,.slot,.cta-row,.qv-art")||el;
-   const hovered=host.matches(":hover");
-   v.hov+=((hovered||v.drag?1:0)-v.hov)*Math.min(1,dt*6);
-   if(!v.drag){
-    if(hovered){if(!v.wasH){v.tg=Math.round((v.rot-0.3)/(Math.PI*2))*Math.PI*2+Math.PI*2+0.3;v.wasH=true}v.rot+=(v.tg-v.rot)*Math.min(1,dt*3.2);v.vel*=0.8}
-    else{v.wasH=false;v.vel*=0.9;v.rot+=v.vel;if(Math.abs(v.vel)<0.004){const rest=Math.round((v.rot-0.3)/(Math.PI*2))*Math.PI*2+0.3;v.rot+=(rest-v.rot)*Math.min(1,dt*3)}}
-   }
-   pivot.rotation.set(-0.04*v.hov,v.rot,0);
-   pivot.position.y=v.hov*0.03;
-   
-   pivot.scale.setScalar(1+v.hov*0.07);
-   shadow.scale.setScalar(1-pivot.position.y*0.8);shadow.material.opacity=0.8-pivot.position.y*2;
-   liquidMat.color.set(s.c);liquidMat.emissive.set(s.c);labelMat.map=labelTex(el.dataset.b);
-   const aspect=rc.width/rc.height,fill=el.dataset.hero?0.95:(el.closest(".mini-row,.cta-row,.slot")?0.97:0.86);
-   const dist=Math.max(1.3/tanh/fill,0.56/(tanh*aspect)/fill)+0.5;
-   camera.aspect=aspect;camera.position.set(0,0.42,dist);camera.lookAt(0,0.02,0);camera.updateProjectionMatrix();
-   const vy=H-rc.bottom;let visTop=Math.max(rc.top,topEdge),visBot=rc.bottom;
-   const clipEl=el.closest(".qv-card");if(clipEl){const cr=clipEl.getBoundingClientRect();visTop=Math.max(visTop,cr.top);visBot=Math.min(visBot,cr.bottom)}
-   if(visBot-visTop<=0)return;
-   renderer.setViewport(rc.left,vy,rc.width,rc.height);
-   renderer.setScissor(rc.left,H-visBot,rc.width,visBot-visTop);
-   renderer.clear(false,true,false);
-   renderer.render(scene,camera);
-  });
- }
- const go=()=>requestAnimationFrame(frame);
- const fontsReady=document.fonts&&document.fonts.load?Promise.all([document.fonts.load('600 112px Caveat'),document.fonts.load('800 60px "Bricolage Grotesque"'),document.fonts.load('700 24px Figtree')]):Promise.resolve();
- Promise.race([fontsReady,new Promise(r=>setTimeout(r,2000))]).then(go,go);
-})();
-</script>
 
 
 <style>
@@ -1391,7 +1296,7 @@ body.qv-open #gl{z-index:93}
  const KEYS=[["black pepper","pepper"],["sea moss","seamoss"],["spirulina","spirulina"],["coconut","coconut"],["wheatgrass","wheatgrass"],["cucumber","cucumber"],["mint","mint"],["ginger","ginger"],["turmeric","turmeric"],["grapefruit","grapefruit"],["lemon","lemon"],["lime","lime"],["orange","orange"],["honey","honey"],["cayenne","cayenne"],["beet","beet"],["apple","apple"],["elderberry","elderberry"],["cinnamon","cinnamon"],["garlic","garlic"]];
  const POS=[["2%","6%",80,""],["2%","4%",74," r"],["4%","62%",72,""],["2%","60%",82," r"]];
  function ingFor(s){const t=s.ingr.toLowerCase(),out=[];KEYS.forEach(([k,id])=>{if(t.includes(k)&&!out.includes(id)&&out.length<4)out.push(id)});return out}
- let cur=null,qty=1,mode="photo";
+ let cur=null,qty=1,mode="3d";
  function render(id,swap){
   const s=byId[id];cur=id;qty=1;
   const ben=BENEFITS.find(b=>b.in[0]===id)||BENEFITS.find(b=>b.in.includes(id));
@@ -1400,7 +1305,7 @@ body.qv-open #gl{z-index:93}
   card.innerHTML=`<button class="qv-x" data-qv-close aria-label="Close">✕</button>
    <button class="qv-nav prev" data-qv-step="-1" aria-label="Previous shot">‹</button>
    <button class="qv-nav next" data-qv-step="1" aria-label="Next shot">›</button>
-   <div class="qv-art${mode==="photo"?" photo":""}"><img class="qv-photo" src="img/${id}.webp" alt="${s.name} bottle photo" decoding="async"><div class="qv-view" role="group" aria-label="View"><button data-view="3d" aria-pressed="${mode==="3d"}">3D bottle</button><button data-view="photo" aria-pressed="${mode==="photo"}">Real photo</button></div><div class="qv-stage">${b3(id)}</div><p class="qv-hint">Drag the bottle to spin it</p></div>
+   <div class="qv-art${mode==="photo"?" photo":""}"><img class="qv-photo" src="img/${id}.webp" alt="${s.name} bottle photo" decoding="async"><div class="qv-view" role="group" aria-label="View"><button data-view="3d" aria-pressed="${mode==="3d"}">360° bottle</button><button data-view="photo" aria-pressed="${mode==="photo"}">With ingredients</button></div><div class="qv-stage">${b3(id)}</div><p class="qv-hint">Drag the bottle to turn it</p></div>
    <div class="qv-info">
     ${s.tag?`<span class="qv-tag">${s.tag}</span>`:""}
     <h3 id="qvName">${s.name}</h3>

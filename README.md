@@ -10,7 +10,8 @@ Preview site done and sent to the client for review. Not on her own domain yet. 
 - **Data** at the top of the main script: `SHOTS` (15 flavors: name, color, tint, ingredients, perks, goals), `BUNDLES`, `BENEFITS`, `GOALS`, `FEATURED`, and the ingredient illustrations `ING` / `BEN_ING`. Change prices or flavors here and every section updates.
 - **Look:** "Garden Fresh" palette: deep green header and footer, leaf-green Meet Mel section, mint bundles, orange only for buttons, cart and logo. Each flavor keeps its own color. Fonts: Bricolage Grotesque, Figtree, Caveat.
 - **Sections:** announcement bar, hero flavor switcher, shot menu with goal filters, benefits tabs with jumping ingredients, bundles plus build-your-own crate, Meet Mel, ordering steps, reviews (placeholders), FAQ, call to action, footer.
-- **3D bottles:** Three.js r128 from cdnjs. One WebGL canvas draws a glass bottle into every `.b3d` element. Labels with the logo are drawn from `SHOTS`. Falls back to SVG bottles if WebGL isn't available.
+- **Bottles:** real photos, no 3D library. Each flavor has 8 angle frames in `spin/<id>/0-7.webp`, cut from Nano Banana turnaround sheets with transparent backgrounds. `b3(id)` renders a bottle, and dragging any `.b3d` swaps frames to turn it. Only frame 0 loads up front; the other 7 load on first touch. Product props photos are in `img/<id>.webp` (pop-up "With ingredients" view).
+- **Photos:** hero backgrounds `img/mountains|ocean|rainforest.webp`, benefits `img/ben-*.webp`, crate `img/crate.webp`, lineup band `img/lineup.webp`.
 - **Chef Mel:** an illustrated SVG character, bottom-left. She talks about any bottle that's clicked, cheers on add-to-cart, introduces sections, follows the cursor and leans while scrolling. She can be minimized.
 - **Cart:** saved in localStorage. Pickup or delivery, free delivery over $40, demo confirmation.
 - **Logo:** `logo.svg` (orange drop with a leaf, "Mel" in script).
