@@ -302,6 +302,20 @@ footer{background:var(--deep);color:#fff;padding-block:56px}
 .hero .giant span{opacity:.16}
 .hero-copy{position:relative}
 .hero-copy::before{content:"";position:absolute;inset:-40px -60px -40px -80px;background:radial-gradient(ellipse at 40% 45%,rgba(255,255,255,.72),rgba(255,255,255,0) 68%);z-index:-1;pointer-events:none}
+
+.photo-scene{position:absolute;inset:0;overflow:hidden}
+.photo-scene img{width:100%;height:100%;object-fit:cover;object-position:50% 42%;animation:kenburns 24s ease-in-out infinite alternate}
+@keyframes kenburns{from{transform:scale(1.02)}to{transform:scale(1.12) translate(-1.5%,1%)}}
+.photo-scene::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,28,16,.82) 0%,rgba(8,28,16,.55) 42%,rgba(8,28,16,.12) 78%),linear-gradient(0deg,rgba(8,28,16,.35),transparent 40%)}
+.hero.dark-scene h1,.hero.dark-scene .lede{color:#fff}
+.hero.dark-scene .lede{color:rgba(255,255,255,.86)}
+.hero.dark-scene h1 .wob{color:#9BE5A9}
+.hero.dark-scene .hero-copy::before{display:none}
+.hero.dark-scene .giant span{color:#fff;opacity:.07}
+.hero.dark-scene .hero-ctas .btn:not(.white){background:#fff;color:#14261C}
+.hero.dark-scene .flav-dots button[aria-pressed="true"]{outline-color:#fff}
+.hero.dark-scene .hero-stage .halo{opacity:.35}
+@media (max-width:860px){.photo-scene::after{background:linear-gradient(180deg,rgba(8,28,16,.8) 0%,rgba(8,28,16,.55) 55%,rgba(8,28,16,.3) 100%)}}
 .qv-scene{position:absolute;inset:0;z-index:0}
 .qv-scene svg{width:100%;height:100%;display:block}
 .qv-art.photo .qv-scene{display:none}
@@ -695,7 +709,9 @@ $("#flavDots").innerHTML=FEATURED.map((id,i)=>`<button style="--dc:${byId[id].c}
 function setHero(i,kick){
  heroIdx=(i+FEATURED.length)%FEATURED.length;const s=byId[FEATURED[heroIdx]];const hero=$("#hero");
  hero.style.setProperty("--tint",s.tint);hero.style.setProperty("--c",s.c);
- const sc=$("#scene");if(sc.dataset.t!==SCENE_OF[s.id]+s.id){sc.dataset.t=SCENE_OF[s.id]+s.id;sc.innerHTML=sceneSvg(s.id)}
+ const sc=$("#scene"),st=SCENE_OF[s.id]||"f";hero.classList.toggle("dark-scene",st==="f");
+ if(st==="f"){if(sc.dataset.t!=="photo"){sc.dataset.t="photo";sc.innerHTML='<div class="sc photo-scene"><img src="img/rainforest.webp" alt="" decoding="async"></div>'}}
+ else if(sc.dataset.t!==st+s.id){sc.dataset.t=st+s.id;sc.innerHTML=sceneSvg(s.id)}
  $("#giant").innerHTML=Array(6).fill(`<span>${s.name}</span>`).join("");
  ["nowName","nowTag","nowPrice"].forEach(id=>{const e=$("#"+id);e.classList.remove("swap");void e.offsetWidth;e.classList.add("swap")});
  $("#nowName").textContent=s.name;$("#nowTag").textContent=s.tagline;$("#nowPrice").textContent=money(PRICE);
