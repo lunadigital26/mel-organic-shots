@@ -388,11 +388,11 @@ footer{background:var(--deep);color:#fff;padding-block:56px}
 .card-art .b3d{position:absolute;inset:14px 0 6px}
 .card-art .b3d img.sp{height:100%}
 .bundle{min-width:0}
-.mini-row{height:auto;min-width:0;justify-content:center;gap:2%}
-.mini-row .b3d{flex:0 1 14.5%;min-width:0;height:auto}
+.mini-row{height:auto;min-width:0;justify-content:center;gap:0}
+.mini-row .b3d{flex:0 1 16%;min-width:0;height:auto}
 .mini-row .b3d img.sp{width:100%;height:auto}
 .cta-row{min-width:0;height:auto;gap:2%}
-.cta-row .b3d{flex:0 1 13%;max-width:72px;min-width:0;height:auto}
+.cta-row .b3d{flex:0 1 15%;max-width:88px;min-width:0;height:auto}
 .cta-row .b3d img.sp{width:100%;height:auto}
 .cta-row .b3d{width:auto;height:170px}
 .crate .slot{width:auto!important;height:22.5%}
@@ -699,7 +699,7 @@ function bottle(color,label){
 
 const SPIN_N=8;
 const spinSrc=(id,f)=>`spin/${id}/${((f%SPIN_N)+SPIN_N)%SPIN_N}.webp`;
-function b3(id,eager){const x=byId[id];return `<div class="b3d" data-b="${id}"><img class="sp" src="${spinSrc(id,0)}" alt="${x.name} bottle" ${eager?"":'loading="lazy" '}decoding="async" draggable="false" width="200" height="540"></div>`}
+function b3(id,eager){const x=byId[id];return `<div class="b3d" data-b="${id}"><img class="sp" src="${spinSrc(id,0)}" alt="${x.name} bottle" ${eager?"":'loading="lazy" '}decoding="async" draggable="false" width="250" height="540"></div>`}
 const spinState=new WeakMap(),preloaded={};
 function preloadSpin(id){if(preloaded[id])return;preloaded[id]=1;for(let f=1;f<SPIN_N;f++){const i=new Image();i.src=spinSrc(id,f)}}
 function setFrame(el,pos){const v=spinState.get(el);v.pos=pos;const f=Math.round(pos);if(f!==v.f){v.f=f;const im=el.querySelector("img.sp");if(im)im.src=spinSrc(el.dataset.b,f)}}
