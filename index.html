@@ -23,7 +23,9 @@
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;overflow-x:hidden}
+html,body{overflow-x:clip;max-width:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+.hero-stage,.ben-stage,.qv-stage{overflow:visible;contain:layout}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:#123D27}
 .wrap{max-width:1200px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
 h1,h2,h3{font-family:var(--display);line-height:.98;letter-spacing:-.025em;text-wrap:balance;margin:0}
@@ -274,6 +276,8 @@ footer{background:var(--deep);color:#fff;padding-block:56px}
 .ingr-pop svg{width:100%;display:block;filter:drop-shadow(0 10px 8px rgba(20,38,28,.2));animation:bobble 4s ease-in-out infinite;animation-delay:calc(var(--dl) + .9s);transition:transform .3s cubic-bezier(.65,.05,.25,1)}
 .ingr-pop:hover svg{transform:rotate(-12deg) scale(1.12)}
 .ingr-pop .nm{position:absolute;left:50%;top:calc(100% + 2px);transform:translateX(-50%);background:#fff;color:#14261C;font-weight:800;font-size:.74rem;padding:.25em .7em;border-radius:999px;white-space:nowrap;box-shadow:0 6px 14px -8px rgba(0,0,0,.4)}
+.ingr-pop.r{left:auto;right:var(--x)}
+.ingr-pop .nm{max-width:110px;overflow:hidden;text-overflow:ellipsis}
 .ingr-pop.boing{animation:boing .65s cubic-bezier(.3,1.6,.5,1)}
 @keyframes hopIn{0%{transform:translateY(-160px) scale(.3) rotate(-50deg);opacity:0}55%{transform:translateY(10px) scale(1.1,.9) rotate(8deg);opacity:1}75%{transform:translateY(-10px) scale(.96,1.04) rotate(-3deg)}100%{transform:none;opacity:1}}
 @keyframes boing{30%{transform:translateY(-34px) rotate(-14deg) scale(1.1)}60%{transform:translateY(4px) scale(1.1,.88)}80%{transform:translateY(-6px)}}
@@ -647,7 +651,7 @@ $("#filters").addEventListener("click",e=>{const b=e.target.closest("button");if
 function renderProducts(anim){
  $("#products").innerHTML=SHOTS.filter(s=>goal==="all"||s.goals.includes(goal)).map((s,i)=>{const q=qtyPick[s.id]||1;return`
  <article class="card${anim?" reveal in":""}" style="--tint:${s.tint};--c:${s.c};${anim?`animation-delay:${i*50}ms`:""}">
-  <div class="card-art">${s.tag?`<span class="tag">${s.tag}</span>`:""}${b3(s.id)}</div>
+  <div class="card-art">${s.tag?`<span class="tag">${s.tag}</span>`:""}<button class="qv-btn" data-qv="${s.id}">Quick look</button>${b3(s.id)}</div>
   <div class="card-body">
    <h3>${s.name}</h3><p class="tagline">${s.tagline}</p>
    <p class="ingr">${s.ingr}</p>
@@ -720,10 +724,10 @@ const ING={
  mint:{n:"Mint",f:"Fresh mint gives Green Reset its clean finish.",s:'<path d="M40 76V30" stroke="#2F7D3A" stroke-width="3.5" stroke-linecap="round"/><path d="M40 44C24 46 12 36 12 22c16-2 28 6 28 22z" fill="#4CAF50" stroke="#2F7D3A" stroke-width="2.5"/><path d="M40 38c16 2 28-8 28-22-16-2-28 6-28 22z" fill="#66BB6A" stroke="#2F7D3A" stroke-width="2.5"/><path d="M40 60c-12 2-22-4-24-14 12-2 22 2 24 14z" fill="#43A047" stroke="#2F7D3A" stroke-width="2.5"/><path d="M40 44Q28 34 16 24M40 38Q52 28 64 18" stroke="#2F7D3A" stroke-width="1.8" fill="none"/>'}
 };
 const BEN_ING={"Ginger":["ginger","lemon","honey","cayenne"],"Turmeric":["turmeric","pepper","orange","ginger"],"Beet":["beet","apple","lemon","ginger"],"Elderberry":["elderberry","cinnamon","honey","lemon"],"Citrus":["orange","grapefruit","lemon","lime"],"Vinegar & garlic":["garlic","apple","honey","cayenne"],"Sea moss":["seamoss","coconut","spirulina","lime"],"Wheatgrass":["wheatgrass","cucumber","mint","lemon"]};
-const ING_POS=[["0%","4%",84],["70%","0%",78],["2%","60%",76],["72%","56%",86]];
+const ING_POS=[["2%","4%",84,""],["2%","0%",78," r"],["2%","60%",76,""],["2%","56%",86," r"]];
 function ingStage(b){
  const list=BEN_ING[b.k]||[];
- return `<div class="ben-stage">${b3(b.in[0])}${list.map((id,i)=>{const g=ING[id];const p=ING_POS[i];return `<button class="ingr-pop" data-ing="${id}" style="--x:${p[0]};--y:${p[1]};--sz:${p[2]}px;--dl:${120+i*140}ms" aria-label="${g.n}"><svg viewBox="0 0 80 80" aria-hidden="true">${g.s}</svg><span class="nm">${g.n}</span></button>`}).join("")}</div>`;
+ return `<div class="ben-stage">${b3(b.in[0])}${list.map((id,i)=>{const g=ING[id];const p=ING_POS[i];return `<button class="ingr-pop${p[3]}" data-ing="${id}" style="--x:${p[0]};--y:${p[1]};--sz:${p[2]}px;--dl:${120+i*140}ms" aria-label="${g.n}"><svg viewBox="0 0 80 80" aria-hidden="true">${g.s}</svg><span class="nm">${g.n}</span></button>`}).join("")}</div>`;
 }
 
 let benIdx=0;
@@ -740,6 +744,9 @@ function renderBen(){
 $("#tabs").addEventListener("click",e=>{const t=e.target.closest("[data-i]");if(!t)return;benIdx=+t.dataset.i;renderBen()});
 $("#panel").addEventListener("click",e=>{const t=e.target.closest("[data-ing]");if(!t)return;t.classList.remove("boing");void t.offsetWidth;t.style.animationDelay="0s";t.classList.add("boing");if(window.chefSay)window.chefSay(ING[t.dataset.ing].f)});
 renderBen();
+function lockBen(){const pn=$("#panel"),keep=benIdx;pn.style.minHeight="";let m=0;for(let i=0;i<BENEFITS.length;i++){benIdx=i;renderBen();m=Math.max(m,pn.offsetHeight)}benIdx=keep;renderBen();pn.style.minHeight=m+"px"}
+lockBen();let lbW=innerWidth,lbT;addEventListener("resize",()=>{if(innerWidth===lbW)return;lbW=innerWidth;clearTimeout(lbT);lbT=setTimeout(lockBen,200)});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(lockBen);
 
 /* reveal on scroll (content is visible at rest; .in adds a pop) */
 if("IntersectionObserver" in window&&!reduce){
@@ -916,13 +923,15 @@ renderCart();
   const cw=canvas.clientWidth,ch=canvas.clientHeight;
   if(cw!==W||ch!==H){W=cw;H=ch;renderer.setSize(W,H,false)}
   renderer.setScissorTest(false);renderer.clear();renderer.setScissorTest(true);
-  const topEdge=Math.max(0,header.getBoundingClientRect().bottom);
+  const qvOpen=document.body.classList.contains("qv-open");
+  const topEdge=qvOpen?0:Math.max(0,header.getBoundingClientRect().bottom);
   document.querySelectorAll(".b3d").forEach(el=>{
    const s=byId[el.dataset.b];if(!s||!el.offsetParent)return;
+   if(qvOpen&&!el.closest(".qv"))return;
    const rc=el.getBoundingClientRect();
    if(rc.width<4||rc.bottom<=topEdge||rc.top>=H||rc.right<=0||rc.left>=W)return;
    const v=state(el);
-   const host=el.closest(".card,.bundle,.panel,.hero-stage,.slot,.cta-row")||el;
+   const host=el.closest(".card,.bundle,.panel,.hero-stage,.slot,.cta-row,.qv-art")||el;
    const hovered=host.matches(":hover");
    v.hov+=((hovered||v.drag?1:0)-v.hov)*Math.min(1,dt*6);
    if(!v.drag){
@@ -938,9 +947,11 @@ renderCart();
    const aspect=rc.width/rc.height,fill=el.dataset.hero?0.95:(el.closest(".mini-row,.cta-row,.slot")?0.97:0.86);
    const dist=Math.max(1.3/tanh/fill,0.56/(tanh*aspect)/fill)+0.5;
    camera.aspect=aspect;camera.position.set(0,0.42,dist);camera.lookAt(0,0.02,0);camera.updateProjectionMatrix();
-   const vy=H-rc.bottom,visTop=Math.max(rc.top,topEdge);
+   const vy=H-rc.bottom;let visTop=Math.max(rc.top,topEdge),visBot=rc.bottom;
+   const clipEl=el.closest(".qv-card");if(clipEl){const cr=clipEl.getBoundingClientRect();visTop=Math.max(visTop,cr.top);visBot=Math.min(visBot,cr.bottom)}
+   if(visBot-visTop<=0)return;
    renderer.setViewport(rc.left,vy,rc.width,rc.height);
-   renderer.setScissor(rc.left,vy,rc.width,rc.bottom-visTop);
+   renderer.setScissor(rc.left,H-visBot,rc.width,visBot-visTop);
    renderer.clear(false,true,false);
    renderer.render(scene,camera);
   });
@@ -999,7 +1010,7 @@ renderCart();
 .chef-open{display:none;pointer-events:auto;border:3px solid #fff;border-radius:999px;background:#123D27;color:#fff;font:800 .85rem "Figtree",sans-serif;padding:.6em 1em .6em .6em;align-items:center;gap:8px;box-shadow:0 10px 24px -10px rgba(0,0,0,.5);cursor:pointer}
 .chef.min .chef-open{display:inline-flex}
 .chef-open span{width:28px;height:28px;border-radius:50%;background:#8B5A3C;border:3px solid #fff}
-@media (max-width:600px){.chef{width:118px}.chef-bubble{font-size:.88rem}}
+@media (max-width:600px){.chef.walk #bob{animation:none}.ingr-pop svg{animation-duration:6s}.chef{width:118px}.chef-bubble{font-size:.88rem}}
 @media (prefers-reduced-motion:reduce){.chef *{animation:none!important}}
 </style>
 
@@ -1120,12 +1131,8 @@ renderCart();
  // click a bottle anywhere -> chef holds it up and talks about it
  let px=0,py=0;
  document.addEventListener("pointerdown",e=>{px=e.clientX;py=e.clientY},true);
- document.addEventListener("click",e=>{
-  const b=e.target.closest(".b3d");if(!b||!b.dataset.b)return;
-  if(Math.hypot(e.clientX-px,e.clientY-py)>8)return;
-  const id=b.dataset.b;chef.style.setProperty("--hb",byId[id].c);
-  act("hold",4200);say(LINES[id]||byId[id].tagline,id);
- });
+ window.CHEF_LINES=LINES;
+ window.chefHold=id=>{chef.style.setProperty("--hb",byId[id].c);act("hold",4200);say(LINES[id]||byId[id].tagline,id)};
  // cheer when something is added
  const baseAdd=add;
  add=function(k,n,el){baseAdd(k,n,el);if(n>0&&!document.getElementById("drawer").classList.contains("open")){setTimeout(()=>{act("cheer",1500);say(CHEERS[Math.floor(Math.random()*CHEERS.length)])},el?650:0)}};
@@ -1145,7 +1152,7 @@ renderCart();
  let lastY=scrollY,lean=0,walkT;
  addEventListener("scroll",()=>{
   const d=scrollY-lastY;lastY=scrollY;
-  if(reduceM)return;
+  if(reduceM||innerWidth<600)return;
   lean=Math.max(-9,Math.min(9,lean+d*0.06));
   chef.classList.add("walk");clearTimeout(walkT);walkT=setTimeout(()=>chef.classList.remove("walk"),220);
  },{passive:true});
@@ -1158,6 +1165,104 @@ renderCart();
  }
  window.chefSay=t=>{act("wave",2300);say(t)};
  setTimeout(()=>{act("wave",2300);say("Hi, I'm Chef Mel! Tap any bottle and I'll tell you all about it.")},1200);
+})();
+</script>
+
+
+<style>
+.qv-btn{position:absolute;right:14px;top:14px;z-index:2;border:2px solid #14261C;background:#fff;color:#14261C;border-radius:999px;padding:.35em .85em;font:800 .78rem "Figtree",sans-serif;cursor:pointer;transition:transform .25s cubic-bezier(.65,.05,.25,1),background .2s}
+.qv-btn:hover{transform:scale(1.08) rotate(3deg);background:#FFD23F}
+.qv{position:fixed;inset:0;z-index:92;display:grid;place-items:center;padding:calc(env(safe-area-inset-top,0px) + 16px) max(14px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 16px) max(14px,env(safe-area-inset-left,0px))}
+.qv-scrim{position:absolute;inset:0;background:rgba(18,61,39,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);animation:qvFade .3s ease both}
+@keyframes qvFade{from{opacity:0}}
+.qv-card{position:relative;width:min(940px,100%);max-height:100%;overflow:auto;background:#fff;border-radius:32px;display:grid;grid-template-columns:1fr 1fr;box-shadow:0 40px 80px -30px rgba(0,0,0,.5);animation:qvIn .55s cubic-bezier(.3,1.4,.5,1) both}
+@keyframes qvIn{from{transform:translateY(60px) scale(.85);opacity:0}}
+.qv-card.swap .qv-info{animation:swapIn .5s cubic-bezier(.65,.05,.25,1)}
+.qv-art{position:relative;background:var(--tint);border-radius:32px 0 0 32px;min-height:440px;display:grid;place-items:center;transition:background-color .6s;overflow:hidden}
+.qv-art::before{content:"";position:absolute;width:78%;aspect-ratio:1;border-radius:50%;background:var(--c);opacity:.18;transition:background-color .6s}
+.qv-stage{position:relative;width:100%;height:100%;min-height:440px;display:grid;place-items:center}
+.qv-stage .b3d{width:min(150px,40%)}
+.qv-info{padding:clamp(22px,4vw,40px);display:flex;flex-direction:column;gap:12px;min-width:0}
+.qv-tag{align-self:flex-start;background:var(--c);color:#fff;font-weight:800;font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;padding:.35em .9em;border-radius:999px}
+.qv-info h3{font-size:clamp(2rem,4vw,2.8rem)}
+.qv-says{background:#F3F8F3;border-radius:18px;padding:12px 14px 12px 54px;position:relative;font-weight:600}
+.qv-says::before{content:"";position:absolute;left:12px;top:12px;width:32px;height:32px;border-radius:50%;background:#8B5A3C;box-shadow:inset 0 9px 0 #2A1810,0 -6px 0 -2px #fff,0 0 0 2px #fff}
+.qv-says b{display:block;font-family:"Caveat",cursive;font-size:1.2rem;color:#FF5A1F;line-height:1}
+.qv-pts{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.qv-pts li{display:flex;gap:10px;font-size:.95rem}
+.qv-pts li::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--c);margin-top:.5em;flex:none}
+.qv-meta{font-size:.85rem;color:#4D5F53}
+.qv-buy{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:6px}
+.qv-x{position:absolute;right:14px;top:14px;z-index:3;width:42px;height:42px;border-radius:50%;border:0;background:#FFD23F;font-weight:800;font-size:1.1rem;cursor:pointer;transition:transform .3s cubic-bezier(.65,.05,.25,1)}
+.qv-x:hover{transform:rotate(90deg)}
+.qv-nav{position:absolute;top:50%;z-index:3;width:44px;height:44px;margin-top:-22px;border-radius:50%;border:2px solid #14261C;background:#fff;font:800 1.4rem sans-serif;cursor:pointer;transition:transform .25s}
+.qv-nav:hover{transform:scale(1.12)}
+.qv-nav.prev{left:12px}.qv-nav.next{left:calc(50% - 56px)}
+.qv-hint{position:absolute;bottom:14px;left:0;right:0;text-align:center;font-size:.78rem;font-weight:700;color:#4D5F53}
+body.qv-open{overflow:hidden}
+body.qv-open #gl{z-index:93}
+@media (max-width:760px){
+ .qv-card{grid-template-columns:1fr;border-radius:26px}
+ .qv-art{border-radius:26px 26px 0 0;min-height:330px}
+ .qv-stage{min-height:330px}
+ .qv-nav.next{left:auto;right:12px}
+ .qv-nav{top:165px}
+}
+@media (prefers-reduced-motion:reduce){.qv *{animation:none!important}}
+</style>
+<div class="qv" id="qv" hidden role="dialog" aria-modal="true" aria-labelledby="qvName">
+ <div class="qv-scrim" data-qv-close></div>
+ <div class="qv-card" id="qvCard"></div>
+</div>
+<script>
+(function(){
+ const qv=document.getElementById("qv"),card=document.getElementById("qvCard");
+ const KEYS=[["black pepper","pepper"],["sea moss","seamoss"],["spirulina","spirulina"],["coconut","coconut"],["wheatgrass","wheatgrass"],["cucumber","cucumber"],["mint","mint"],["ginger","ginger"],["turmeric","turmeric"],["grapefruit","grapefruit"],["lemon","lemon"],["lime","lime"],["orange","orange"],["honey","honey"],["cayenne","cayenne"],["beet","beet"],["apple","apple"],["elderberry","elderberry"],["cinnamon","cinnamon"],["garlic","garlic"]];
+ const POS=[["2%","6%",80,""],["2%","4%",74," r"],["4%","62%",72,""],["2%","60%",82," r"]];
+ function ingFor(s){const t=s.ingr.toLowerCase(),out=[];KEYS.forEach(([k,id])=>{if(t.includes(k)&&!out.includes(id)&&out.length<4)out.push(id)});return out}
+ let cur=null,qty=1;
+ function render(id,swap){
+  const s=byId[id];cur=id;qty=1;
+  const ben=BENEFITS.find(b=>b.in.includes(id));
+  const says=(window.CHEF_LINES&&CHEF_LINES[id])||s.tagline;
+  card.style.setProperty("--c",s.c);card.style.setProperty("--tint",s.tint);
+  card.innerHTML=`<button class="qv-x" data-qv-close aria-label="Close">✕</button>
+   <button class="qv-nav prev" data-qv-step="-1" aria-label="Previous shot">‹</button>
+   <button class="qv-nav next" data-qv-step="1" aria-label="Next shot">›</button>
+   <div class="qv-art"><div class="qv-stage">${b3(id)}${ingFor(s).map((g,i)=>`<button class="ingr-pop${POS[i][3]}" data-qing="${g}" style="--x:${POS[i][0]};--y:${POS[i][1]};--sz:${POS[i][2]}px;--dl:${150+i*140}ms" aria-label="${ING[g].n}"><svg viewBox="0 0 80 80" aria-hidden="true">${ING[g].s}</svg><span class="nm">${ING[g].n}</span></button>`).join("")}</div><p class="qv-hint">Drag the bottle · tap an ingredient</p></div>
+   <div class="qv-info">
+    ${s.tag?`<span class="qv-tag">${s.tag}</span>`:""}
+    <h3 id="qvName">${s.name}</h3>
+    <p class="tagline" style="color:#4D5F53;opacity:1">${s.tagline}</p>
+    <div class="qv-says" id="qvSays"><b>Mel says</b><span>${says}</span></div>
+    <p><strong>Inside:</strong> ${s.ingr}</p>
+    <div class="perks">${s.perks.map(p=>`<span style="background:${s.tint}">${p}</span>`).join("")}</div>
+    ${ben?`<ul class="qv-pts">${ben.pts.map(p=>`<li>${p}</li>`).join("")}</ul>`:""}
+    <p class="qv-meta">2 fl oz glass bottle · organic · drink within 4 days · general wellness info, not medical advice</p>
+    <div class="qv-buy">
+     <span class="price">${money(PRICE)}</span>
+     <div class="stepper"><button data-qv-q="-1" aria-label="Fewer">−</button><output id="qvQty">1</output><button data-qv-q="1" aria-label="More">+</button></div>
+     <button class="btn orange" id="qvAdd">Add to order <span class="arr">→</span></button>
+    </div>
+   </div>`;
+  if(swap){card.classList.remove("swap");void card.offsetWidth;card.classList.add("swap");const b=card.querySelector(".b3d");setTimeout(()=>window.kickBottle&&window.kickBottle(b),50)}
+ }
+ window.openQV=function(id){render(id);qv.hidden=false;document.body.classList.add("qv-open");setTimeout(()=>{const x=card.querySelector(".qv-x");x&&x.focus({preventScroll:true})},50)};
+ function close(){qv.hidden=true;document.body.classList.remove("qv-open")}
+ function step(d){const i=SHOTS.findIndex(s=>s.id===cur);render(SHOTS[(i+d+SHOTS.length)%SHOTS.length].id,true)}
+ qv.addEventListener("click",e=>{
+  if(e.target.closest("[data-qv-close]"))return close();
+  const st=e.target.closest("[data-qv-step]");if(st)return step(+st.dataset.qvStep);
+  const q=e.target.closest("[data-qv-q]");if(q){qty=Math.max(1,qty+ +q.dataset.qvQ);document.getElementById("qvQty").textContent=qty;return}
+  const ing=e.target.closest("[data-qing]");if(ing){ing.classList.remove("boing");void ing.offsetWidth;ing.style.animationDelay="0s";ing.classList.add("boing");document.querySelector("#qvSays span").textContent=ING[ing.dataset.qing].f;return}
+  const a=e.target.closest("#qvAdd");if(a){add("shot:"+cur,qty,card.querySelector(".b3d"));toast(`Added ${qty} × ${byId[cur].name}`);a.innerHTML="Added ✓";setTimeout(()=>{if(a.isConnected)a.innerHTML='Add another <span class="arr">→</span>'},1400)}
+ });
+ document.addEventListener("keydown",e=>{if(qv.hidden)return;if(e.key==="Escape")close();if(e.key==="ArrowRight")step(1);if(e.key==="ArrowLeft")step(-1)});
+ // tap (not drag) on any bottle opens the pop-up
+ let t0=null;
+ document.addEventListener("pointerdown",e=>{const b=e.target.closest(".b3d");t0=b&&b.dataset.b&&!b.closest(".qv")?{b,x:e.clientX,y:e.clientY,t:performance.now()}:null},true);
+ document.addEventListener("pointerup",e=>{if(!t0)return;const s=t0;t0=null;if(Math.hypot(e.clientX-s.x,e.clientY-s.y)>10||performance.now()-s.t>700)return;openQV(s.b.dataset.b)},true);
+ document.addEventListener("click",e=>{const b=e.target.closest("[data-qv]");if(b){e.preventDefault();openQV(b.dataset.qv)}});
 })();
 </script>
 
